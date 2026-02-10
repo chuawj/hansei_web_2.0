@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>수강신청 내역</title>
+  <link rel="stylesheet" href="../css/history.css">
+</head>
+<body>
+  <div class="wrap">
+  <h2> 수강신청 내역</h2>
+    <table>
+  <thead><tr><th>No</th><th>개설학부</th><th>학과</th><th>학년</th><th>교과목명</th><th>과목번호</th><th>이수구분</th><th>학점</th><th>정원</th></tr></thead>
+      <tbody id="history-tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    function getRegister() {
+      return JSON.parse(localStorage.getItem('registerList')||'[]');
+    }
+    function renderHistoryTable() {
+      const list = getRegister();
+      const tbody = document.getElementById('history-tbody');
+      tbody.innerHTML = '';
+      list.forEach((s,i) => {
+        const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${i+1}</td><td>${s.dept||''}</td><td>${s.major||''}</td><td>${s.year||''}</td><td>${s.name||''}</td><td>${s.code||''}</td><td>${s.type||''}</td><td>${s.credit||''}</td><td>${s.cap !== undefined ? s.cap : 30}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    renderHistoryTable();
+  </script>
+</body>
+</html>

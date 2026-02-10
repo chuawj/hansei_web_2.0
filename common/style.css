@@ -1,0 +1,111 @@
+body{ font-family: 돋움; font: 12px "Trebuchet MS", sans-serif;}
+/*??? ????*/
+table { font-family:"돋움","돋움체"; font-size:12px; color:#666666	; text-decoration: none; }
+table.tableList { table-layout:fixed; border-top:2px #A6D9DC solid; border-bottom:1px #CFCFCF solid; }
+table.tableList tr.even { background:#FFFFEA } /* CSS2 나 CSS3 에 even 은 없다 */
+table.tableList tr:hover { background:#E3F2FF } /* 마우스 커서가 올려진 경우라서 모바일에선 무용. :focus 가 아님에 유의 */
+table.tableList th, table.tableList td { padding:7px 3px 3px 3px; text-align:center; font-size:9pt; }
+table.tableList th { border-right:1px #F3D7D7 solid; border-bottom:1px #CFCFCF solid; color:#000000; background:#FCEFEF; }
+table.tableList th.end, table.tableList td.end { border-right:none }
+table.tableList td { border-right:1px #F0F0F0 solid; border-bottom:1px #CFCFCF dotted; vertical-align:center; }
+table.tableList td.dot { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }  /* 말줄임 */
+table.tableList td.left { text-align:left; }
+table.tableList td.right { text-align:right; }
+table.tableList td img { vertical-align:middle; }
+
+
+table.tableList2 { table-layout:fixed; border-top:2px #A6D9DC solid; border-bottom:1px #CFCFCF solid; }
+table.tableList2 tr.even { background:#FFFFEA } /* CSS2 나 CSS3 에 even 은 없다 */
+table.tableList2 tr:hover { background:#FCEFEF } /* 마우스 커서가 올려진 경우라서 모바일에선 무용. :focus 가 아님에 유의 */
+table.tableList2 th, table.tableList2 td { padding:7px 3px 3px 3px; text-align:center; font-size:9pt; }
+table.tableList2 th { border-right:1px #F3D7D7 solid; border-bottom:1px #CFCFCF solid; color:#000000; background:#E3F2FF; }
+table.tableList2 th.end, table.tableList2 td.end { border-right:none }
+table.tableList2 td { border-right:1px #F0F0F0 solid; border-bottom:1px #CFCFCF dotted; vertical-align:center; }
+table.tableList2 td.dot { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }  /* 말줄임 */
+table.tableList2 td.left { text-align:left; }
+table.tableList2 td.right { text-align:right; }
+table.tableList2 td img { vertical-align:middle; }
+
+table.tableList3 { table-layout:fixed; border-top:1px #C0C0C0 solid; border-bottom:1px #C0C0C0 solid; border-left:1px #C0C0C0 solid; border-right:1px #C0C0C0 solid;}
+table.tableList3 th, table.tableList3 td { padding:7px 3px 3px 3px; font-size:9pt; }
+table.tableList3 th { border-right:1px #F3D7D7 solid; border-bottom:1px #CFCFCF solid; color:#000000; background:#E3F2FF; }
+table.tableList3 th.end, table.tableList2 td.end { border-right:none }
+table.tableList3 td { border-right:1px #F0F0F0 solid; border-bottom:1px #CFCFCF dotted; vertical-align:center; }
+table.tableList3 td.dot { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }  /* 말줄임 */
+table.tableList3 td.left { text-align:left; }
+table.tableList3 td.right { text-align:right; }
+table.tableList3 td img { vertical-align:middle; }
+
+table.tableList4 { table-layout:fixed; border-top:2px #A6D9DC solid; border-bottom:1px #CFCFCF solid; }
+table.tableList4 th, table.tableList4 td { padding:7px 3px 3px 3px; text-align:center; font-size:9pt; }
+table.tableList4 th { border-right:1px #F3D7D7 solid; border-bottom:1px #CFCFCF solid; color:#000000; background:#E3F2FF; }
+table.tableList4 th.end, table.tableList4 td.end { border-right:none }
+table.tableList4 td { border-right:1px #F0F0F0 solid; border-bottom:1px #CFCFCF dotted; vertical-align:center; }
+table.tableList4 td.dot { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }  /* 말줄임 */
+table.tableList4 td.left { text-align:left; }
+table.tableList4 td.right { text-align:right; }
+table.tableList4 td img { vertical-align:middle; }
+
+.demoHeaders { margin-top: 2em; }
+.a{ background:#FCEFEF }
+.b{ background:#FFFFFF }
+
+.input_emi { border: 1px solid #ACA899; background-color:#FFFDF9;}
+
+/* CSS3 BUTTON */
+
+.btn {
+	display: inline-block;
+	background: url(/html/images/btn_bg.png) repeat-x 0px 0px;
+	padding:5px 10px 6px 10px;
+	font-weight:bold;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+	/*border:1px solid rgba(0,0,0,0.4);*/
+	-moz-border-radius: 15px;
+	-moz-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+	-webkit-border-radius: 15px;
+	-webkit-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+}
+
+.btn:hover {
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	cursor:pointer;
+}
+
+.btn2 {
+	display: inline-block;
+	background: url(/html/images/btn_bg.png) repeat-x 0px 0px;
+	padding:2px 2px 2px 2px;
+	font-weight:bold;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+	/*border:1px solid rgba(0,0,0,0.4);*/
+	-moz-border-radius: 15px;
+	-moz-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+	/*-webkit-border-radius: 15px;*/
+	-webkit-box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+}
+
+.btn2:hover {
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	cursor:pointer;
+}
+
+/* COLOR VARIATIONS */
+
+.blue		{background-color: #CCCCCC; color: #141414;}
+.blue:hover	{background-color: #00c0ff; color: #ffffff;}
+.on	{text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	 cursor:pointer;
+	 background-color: #00c0ff; color: #ffffff;}
+.on2	{text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	 cursor:pointer;
+	 background-color: #ff004e; color: #ffffff;}
+
+.green		{background-color: #CCCCCC; color: #141414;}
+.green:hover{background-color: #8aff00; color: #ffffff;}
+
+.red		{background-color: #CCCCCC; color: #141414;}
+.red:hover	{background-color: #ff004e; color: #ffffff;}
+.title	{text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+	 cursor:pointer;
+	 background-color: #ff004e; color: #ffffff;}

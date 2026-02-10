@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>한세대학교 수강신청 연습 메인</title>
+  <link rel="stylesheet" href="./common/style.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/guide.css">
+  <script src="./common/jquery-1.8.3.js"></script>
+  <script src="./js/index.js"></script>
+</head>
+<body style="margin:0; padding:0; background:#e8e8e8; display:flex; flex-direction:column; min-height:100vh;">
+  <div id="timer-not-opened-modal" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:2000;display:none;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:40px 36px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.2);text-align:center;min-width:360px;">
+      <div style="font-size:1.4em;color:#d32f2f;font-weight:bold;margin-bottom:16px;">⏱ 수강신청 미개시</div>
+      <div style="font-size:1em;color:#333;margin-bottom:24px;line-height:1.6;">아직 수강신청이 열리지 않았습니다.<br>왼쪽 메뉴에서 <strong>타이머를 설정</strong>한 후<br>시간이 되면 접근해주세요.</div>
+      <button id="timer-modal-close-btn" style="height:40px;width:100%;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:1em;font-weight:bold;">확인</button>
+    </div>
+  </div>
+  <div style="display:flex; width:100%; flex:1; background:#e8e8e8;">
+    <div class="side-col">
+      <img src="common/logo.png" alt="한세대학교" style="margin-bottom:8px; width:100%; border-radius:3px;">
+     
+      <div id="timer-setup" class="timer-box">
+        <b class="timer-title">⏱ 오픈 타이머</b>
+        <div style="display:flex; gap:4px; align-items:center; width:100%;">
+          <label for="timer-hour" class="sr">시</label> <input type="number" id="timer-hour" min="0" max="23" value="0" class="timer-input">
+          <label for="timer-min" class="sr">분</label> <input type="number" id="timer-min" min="0" max="59" value="0" class="timer-input">
+          <label for="timer-sec" class="sr">초</label> <input type="number" id="timer-sec" min="0" max="59" value="0" class="timer-input">
+        </div>
+      </div>
+      <div class="timer-actions">
+        <button id="set-timer-btn" class="btn-primary small">설정</button>
+        <button id="reset-btn" class="btn-danger small">초기화</button>
+        <span id="timer-status" class="timer-status"></span>
+      </div>
+      <div style="margin-top:10px; padding:8px; border:1px solid #ddd; background:#fafafa; border-radius:2px; font-size:11px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <input type="checkbox" id="queue-toggle" style="vertical-align:middle; width:13px; height:13px; cursor:pointer;">
+          <label for="queue-toggle" style="cursor:pointer; font-weight:600; margin:0;">대기열</label>
+          <span id="queue-status" style="color:#888; margin-left:auto;"></span>
+        </div>
+        <div id="queue-selector" style="display:none; margin-top:8px; padding-top:8px; border-top:1px solid #ddd;">
+          <div style="font-weight:600; color:#333; margin-bottom:6px; font-size:10px;">대기열 선택:</div>
+          <select id="queue-select" style="width:100%; padding:4px; border:1px solid #ccc; border-radius:2px; font-size:11px; cursor:pointer;">
+            <option value="">선택 안함</option>
+            <option value="1">1순위 - 매우 빠름</option>
+            <option value="2">2순위 - 빠름</option>
+            <option value="3">3순위 - 보통</option>
+            <option value="4">4순위 - 느림</option>
+            <option value="5">5순위 - 매우 느림</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; padding:10px; border:1px solid #ddd; background:#fff8f8; border-radius:2px; font-size:11px;">
+        <div style="font-weight:600; margin-bottom:6px; color:#333;">트래픽 시뮬레이터</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button id="start-traffic-simulation" class="btn2" style="padding:6px;">시작</button>
+          <button id="stop-traffic-simulation" class="btn2" style="padding:6px; display:none;">중지</button>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:6px; align-items:center;">
+          <label style="font-size:12px;">실패율</label>
+          <input id="traffic-failure-rate" type="number" min="0" max="100" value="50" style="width:60px;padding:4px;border:1px solid #ccc;border-radius:3px;">
+          <button id="traffic-modal-open" class="btn2" style="padding:6px;">설정</button>
+        </div>
+      </div>
+
+      <div id="traffic-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:2500;align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:28px;border-radius:10px;min-width:320px;">
+          <div style="font-weight:700;margin-bottom:8px;color:#c62828">트래픽 시뮬레이터</div>
+          <div style="margin-bottom:12px;">서버 장애를 시뮬레이션합니다. 실패율을 설정하고 <strong>시작</strong>을 누르세요.</div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button id="traffic-modal-close-btn" class="btn2" style="padding:6px;">닫기</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; padding:10px; border:1px solid #ddd; background:#f3fbff; border-radius:2px; font-size:11px;">
+        <div style="font-weight:600; margin-bottom:6px; color:#333;">학기 선택</div>
+        <div style="display:flex; gap:8px;">
+          <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+            <input type="radio" id="semester-1" name="semester" value="1" style="cursor:pointer;">
+            <span>1학기</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+            <input type="radio" id="semester-2" name="semester" value="2" style="cursor:pointer;" checked>
+            <span>2학기</span>
+          </label>
+        </div>
+      </div>
+
+      <a class="sidebar-btn" href="https://sugangnew.hansei.ac.kr:8808/main.html?fake=Tue%20Nov%2018%202025%2019:18:25%20GMT+0900%20(%C7%D1%B1%B9%20%C7%A5%C1%D8%BD%C3)" target="_blank">본수강신청 바로가기</a>
+    </div>
+
+   
+    <div style="flex:1; display:flex; flex-direction:column; height:100%; background:#e8e8e8;">
+      <div class="nav">
+        <button class="tab-btn active" data-page="notice">공지사항</button>
+        <button class="tab-btn" data-page="subject">교과목조회</button>
+        <button class="tab-btn" data-page="basket">예비수강신청</button>
+        <button class="tab-btn" data-page="register">수강신청</button>
+        <button class="tab-btn" data-page="history">수강내역 조회</button>
+        <button id="start-tour-btn" title="가이드 켜기" style="margin-left:12px;height:34px;padding:0 10px;background:#fff;border:1px solid #ddd;border-radius:6px;cursor:pointer;">도움말 ▶</button>
+      </div>
+
+      <div class="content-panel">
+        <iframe id="main-frame" src="한세 수강신청 연습_2.0 리뉴얼/index.html" style="width:100%; height:100%; border:none;"></iframe>
+      </div>
+    </div>
+  </div>
+  <footer style="padding:12px 8px; font-size:12px; color:#666; text-align:center; border-top:1px solid #eee; background:#f8f8f8;">
+    본 웹 콘텐츠의 일부는 한세대학교 수강신청 시스템에서 가져온 내용을 포함하고 있으며, 해당 콘텐츠 및 웹 페이지의 저작권은 한세대학교에 있습니다.
+  </footer>
+  <script src="./js/guide.js"></script>
+</body>
+</html>

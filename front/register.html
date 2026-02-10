@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>수강신청</title>
+  <link rel="stylesheet" href="../common/style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: '맑은 고딕', '돋움', sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+      padding: 15px;
+    }
+
+    /* 탭 */
+    .sw-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+      padding: 10px 20px;
+      list-style: none;
+      margin: 0;
+    }
+    .sw-tabs li {
+      padding: 8px 20px;
+      cursor: pointer;
+      border-right: 1px solid #ddd;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+    }
+    .sw-tabs li:last-child { border-right: none; }
+    .sw-tabs li:hover { background: #f0f0f0; }
+    .sw-tabs li.is-active {
+      color: #1976d2;
+      border-bottom: 2px solid #1976d2;
+      margin-bottom: -10px;
+      padding-bottom: 6px;
+    }
+
+    .sw-tab-contents > div { display: none; }
+    .sw-tab-contents > div.is-active { display: block; }
+
+    /* 폼 */
+    .form-search {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 3px;
+      margin-bottom: 15px;
+    }
+    .form-search table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .form-search th {
+      text-align: left;
+      font-weight: 600;
+      width: auto;
+      padding: 6px;
+      white-space: nowrap;
+    }
+    .form-search td {
+      padding: 6px;
+    }
+    .form-search select, .form-search input {
+      padding: 5px;
+      border: 1px solid #bbb;
+      border-radius: 2px;
+      font-size: 11px;
+      min-width: 120px;
+    }
+    .form-search input[type="text"] {
+      min-width: 200px;
+    }
+    .form-search button {
+      padding: 5px 12px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .form-search button:hover { background: #1565c0; }
+
+    /* 헤더 */
+    .sw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .sw-header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .sw-header small {
+      font-size: 11px;
+      color: #666;
+      margin-left: 8px;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+    }
+    .info-group {
+      display: flex;
+      gap: 8px;
+    }
+    .info-group label {
+      font-weight: 600;
+      color: #333;
+    }
+    .info-group .txt-red {
+      color: #d32f2f;
+      font-weight: 600;
+    }
+
+    /* 테이블 */
+    table.result-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    table.result-table thead {
+      background: #fafafa;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+    table.result-table th {
+      padding: 8px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      color: #333;
+    }
+    table.result-table td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 11px;
+    }
+    table.result-table tr:hover { background: #f5f5f5; }
+
+    /* 버튼 */
+    .btn-add, .btn-del {
+      padding: 4px 8px;
+      border: 1px solid #bbb;
+      border-radius: 2px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .btn-add {
+      color: #1976d2;
+      border-color: #1976d2;
+    }
+    .btn-add:hover { background: #1976d2; color: #fff; }
+    .btn-del {
+      color: #d32f2f;
+      border-color: #d32f2f;
+    }
+    .btn-del:hover { background: #d32f2f; color: #fff; }
+
+    /* 리스트 */
+    .list-dot {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .list-dot li {
+      padding: 3px 0;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .txt-red { color: #d32f2f; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <!-- 탭 -->
+  <ul class="sw-tabs">
+    <li data-tab="tab-1" class="is-active">개설과목</li>
+    <li data-tab="tab-2">예비수강내역</li>
+    <li data-tab="tab-3">수강신청내역</li>
+  </ul>
+
+  <div class="sw-tab-contents">
+    <!-- 탭 1: 개설과목 + 수강신청 내역 -->
+    <div id="tab-1" class="is-active">
+      <!-- 검색 폼 -->
+      <div class="form-search">
+        <table>
+          <tbody>
+            <tr>
+              <th>학부</th>
+              <td><select id="dept-filter"><option value="">전체</option></select></td>
+              <th>학과</th>
+              <td><select id="major-filter"><option value="">전체</option></select></td>
+              <th>검색</th>
+              <td><input type="text" id="search-input" placeholder="과목명(코드) 입력"></td>
+              <th></th>
+              <td><button onclick="filterCourses()">조회</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 개설과목 결과 -->
+      <div class="sw-header">
+        <div>
+          <h1>개설과목 조회<small> &gt; <span id="search-title">계절학기</span></small></h1>
+        </div>
+        <div class="actions">
+          <div class="info-group">
+            <label>Total :</label>
+            <span class="txt-red"><em id="total-count">0</em></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 96px; overflow-y: auto;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">학부</th>
+              <th style="width: 100px;">학과</th>
+              <th style="width: 50px;">학년</th>
+              <th style="width: 150px;">과목명</th>
+              <th style="width: 60px;">코드</th>
+              <th style="width: 70px;">이수구분</th>
+              <th style="width: 50px;">학점</th>
+              <th style="width: 50px;">신청</th>
+              <th style="width: 50px;">정원</th>
+              <th style="width: 70px;">신청</th>
+            </tr>
+          </thead>
+          <tbody id="course-table">
+            <tr><td colspan="10" style="text-align:center; color:#999;">조회버튼을 클릭하여 개설교과목을 조회하세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
+      <!-- 수강신청 내역 -->
+      <div class="sw-header">
+        <h1>수강신청 내역</h1>
+        <div class="actions">
+          <div class="info-group">
+            <label>총 신청학점 :</label>
+            <span class="txt-red"><em id="register-credit">0</em></span>
+            <label style="margin-left: 20px;">신청과목수 :</label>
+            <span class="txt-red"><em id="register-count">0</em></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-height: 350px; overflow-y: auto;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">학부</th>
+              <th style="width: 100px;">학과</th>
+              <th style="width: 50px;">학년</th>
+              <th style="width: 150px;">과목명</th>
+              <th style="width: 60px;">코드</th>
+              <th style="width: 70px;">이수구분</th>
+              <th style="width: 50px;">학점</th>
+              <th style="width: 50px;">신청</th>
+              <th style="width: 50px;">정원</th>
+              <th style="width: 70px;">삭제</th>
+            </tr>
+          </thead>
+          <tbody id="register-table">
+            <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 8px 12px; border-radius: 3px; margin-bottom: 15px;">
+        <ul class="list-dot">
+          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
+          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 탭 2: 예비수강 내역조회 -->
+    <div id="tab-2">
+      <div class="sw-header">
+        <h1>예비수강 내역</h1>
+        <div class="actions">
+          <div class="info-group">
+            <label>총 신청학점 :</label>
+            <span class="txt-red"><em id="basket-credit">0</em></span>
+            <label style="margin-left: 20px;">신청과목수 :</label>
+            <span class="txt-red"><em id="basket-count">0</em></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-height: 350px; overflow-y: auto;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">학부</th>
+              <th style="width: 100px;">학과</th>
+              <th style="width: 50px;">학년</th>
+              <th style="width: 150px;">과목명</th>
+              <th style="width: 60px;">코드</th>
+              <th style="width: 70px;">이수구분</th>
+              <th style="width: 50px;">학점</th>
+              <th style="width: 50px;">신청</th>
+              <th style="width: 50px;">정원</th>
+              <th style="width: 70px;">삭제</th>
+            </tr>
+          </thead>
+          <tbody id="basket-table">
+            <tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-search">
+        <ul class="list-dot">
+          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
+          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 탭 3: 수강신청내역 -->
+    <div id="tab-3">
+      <div class="sw-header">
+        <h1>수강신청 내역</h1>
+        <div class="actions">
+          <div class="info-group">
+            <label>총 신청학점 :</label>
+            <span class="txt-red"><em id="register-credit-tab3">0</em></span>
+            <label style="margin-left: 20px;">신청과목수 :</label>
+            <span class="txt-red"><em id="register-count-tab3">0</em></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-height: 350px; overflow-y: auto;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">학부</th>
+              <th style="width: 100px;">학과</th>
+              <th style="width: 50px;">학년</th>
+              <th style="width: 150px;">과목명</th>
+              <th style="width: 60px;">코드</th>
+              <th style="width: 70px;">이수구분</th>
+              <th style="width: 50px;">학점</th>
+              <th style="width: 50px;">신청</th>
+              <th style="width: 50px;">정원</th>
+              <th style="width: 70px;">삭제</th>
+            </tr>
+          </thead>
+          <tbody id="register-table-tab3">
+            <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 8px 12px; border-radius: 3px; margin-bottom: 15px;">
+        <ul class="list-dot">
+          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
+          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data_from_real.js"></script>
+  <script>
+    let allSubjects = subjects || [];
+
+    // 탭 전환
+    document.querySelectorAll('.sw-tabs li').forEach(li => {
+      li.onclick = function() {
+        const tabId = this.dataset.tab;
+        document.querySelectorAll('.sw-tabs li').forEach(l => l.classList.remove('is-active'));
+        document.querySelectorAll('.sw-tab-contents > div').forEach(d => d.classList.remove('is-active'));
+        this.classList.add('is-active');
+        document.getElementById(tabId).classList.add('is-active');
+        
+        if (tabId === 'tab-2') renderBasketListInTab2();
+        if (tabId === 'tab-3') renderRegisterListInTab3();
+      };
+    });
+
+    // 학부 초기화
+    function initDepts() {
+      const depts = [...new Set(allSubjects.map(s => s.dept))].sort();
+      const select = document.getElementById('dept-filter');
+      depts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        select.appendChild(opt);
+      });
+    }
+
+    // 학과 초기화
+    function initMajors() {
+      const deptSelect = document.getElementById('dept-filter');
+      const majorSelect = document.getElementById('major-filter');
+      
+      deptSelect.onchange = function() {
+        majorSelect.innerHTML = '<option value="">전체</option>';
+        if (this.value) {
+          const majors = [...new Set(allSubjects.filter(s => s.dept === this.value).map(s => s.major))].sort();
+          majors.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            majorSelect.appendChild(opt);
+          });
+        }
+      };
+    }
+
+    // 과목 필터링
+    function filterCourses() {
+      const dept = document.getElementById('dept-filter').value;
+      const major = document.getElementById('major-filter').value;
+      const search = document.getElementById('search-input').value.toLowerCase();
+
+      let filtered = allSubjects.filter(s => {
+        if (dept && s.dept !== dept) return false;
+        if (major && s.major !== major) return false;
+        if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+        return true;
+      });
+
+      document.getElementById('total-count').textContent = filtered.length;
+      const tbody = document.getElementById('course-table');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">검색 결과가 없습니다.</td></tr>';
+        return;
+      }
+
+      filtered.forEach((s, i) => {
+        const cap = s.cap !== undefined ? s.cap : 30;
+        const isAdded = JSON.parse(localStorage.getItem('registerList') || '[]').some(r => r.code === s.code);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.dept}</td>
+          <td>${s.major}</td>
+          <td>${s.year}</td>
+          <td>${s.name}</td>
+          <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+          <td>${s.type}</td>
+          <td>${s.credit}</td>
+          <td>0</td>
+          <td>${cap}</td>
+          <td>
+            ${isAdded ? '<span style="color:#d32f2f;">신청</span>' : '<button class="btn-add" onclick="addToRegister(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\')">신청</button>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 수강신청 추가
+    function addToRegister(code, name, dept, major, year, type, credit, cap) {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      if (list.find(s => s.code === code)) {
+        alert('이미 신청한 과목입니다.');
+        return;
+      }
+      list.push({ code, name, dept, major, year, type, credit, cap });
+      localStorage.setItem('registerList', JSON.stringify(list));
+      filterCourses();
+      renderRegisterList();
+    }
+
+    // 수강신청 삭제
+    function removeFromRegister(code) {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      list = list.filter(s => s.code !== code);
+      localStorage.setItem('registerList', JSON.stringify(list));
+      filterCourses();
+      renderRegisterList();
+    }
+
+    // 수강신청 목록 렌더링
+    function renderRegisterList() {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      const tbody = document.getElementById('register-table');
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        document.getElementById('register-credit').textContent = '0';
+        document.getElementById('register-count').textContent = '0';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>';
+        return;
+      }
+
+      let totalCredit = 0;
+      list.forEach((s, i) => {
+        totalCredit += parseInt(s.credit, 10);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.dept}</td>
+          <td>${s.major}</td>
+          <td>${s.year}</td>
+          <td>${s.name}</td>
+          <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+          <td>${s.type}</td>
+          <td>${s.credit}</td>
+          <td>0</td>
+          <td>${s.cap}</td>
+          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('register-credit').textContent = totalCredit;
+      document.getElementById('register-count').textContent = list.length;
+    }
+
+    // Tab 2: basketList 렌더링 (예비수강내역)
+    function renderBasketListInTab2() {
+      let list = JSON.parse(localStorage.getItem('basketList') || '[]');
+      const tbody = document.getElementById('basket-table');
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        document.getElementById('basket-credit').textContent = '0';
+        document.getElementById('basket-count').textContent = '0';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>';
+        return;
+      }
+
+      let totalCredit = 0;
+      list.forEach((s, i) => {
+        totalCredit += parseInt(s.credit, 10);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.dept}</td>
+          <td>${s.major}</td>
+          <td>${s.year}</td>
+          <td>${s.name}</td>
+          <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+          <td>${s.type}</td>
+          <td>${s.credit}</td>
+          <td>0</td>
+          <td>${s.cap}</td>
+          <td><button class="btn-del" onclick="removeBasketFromTab2('${s.code}')">삭제</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('basket-credit').textContent = totalCredit;
+      document.getElementById('basket-count').textContent = list.length;
+    }
+
+    // Tab 2에서 basketList 삭제
+    function removeBasketFromTab2(code) {
+      let list = JSON.parse(localStorage.getItem('basketList') || '[]');
+      list = list.filter(s => s.code !== code);
+      localStorage.setItem('basketList', JSON.stringify(list));
+      renderBasketListInTab2();
+    }
+
+    // Tab 3: registerList 렌더링 (수강신청내역)
+    function renderRegisterListInTab3() {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      const tbody = document.getElementById('register-table-tab3');
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        document.getElementById('register-credit-tab3').textContent = '0';
+        document.getElementById('register-count-tab3').textContent = '0';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>';
+        return;
+      }
+
+      let totalCredit = 0;
+      list.forEach((s, i) => {
+        totalCredit += parseInt(s.credit, 10);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.dept}</td>
+          <td>${s.major}</td>
+          <td>${s.year}</td>
+          <td>${s.name}</td>
+          <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+          <td>${s.type}</td>
+          <td>${s.credit}</td>
+          <td>0</td>
+          <td>${s.cap}</td>
+          <td><button class="btn-del" onclick="removeRegisterFromTab3('${s.code}')">삭제</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('register-credit-tab3').textContent = totalCredit;
+      document.getElementById('register-count-tab3').textContent = list.length;
+    }
+
+    // Tab 3에서 registerList 삭제
+    function removeRegisterFromTab3(code) {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      list = list.filter(s => s.code !== code);
+      localStorage.setItem('registerList', JSON.stringify(list));
+      renderRegisterListInTab3();
+    }
+
+    // Tab 2: basketList 렌더링 (제거됨)
+
+    // 초기화
+    initDepts();
+    initMajors();
+    renderRegisterList();
+    renderBasketListInTab2();
+    renderRegisterListInTab3();
+  </script>
+</body>
+</html>

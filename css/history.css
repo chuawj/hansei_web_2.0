@@ -1,0 +1,28 @@
+body { margin:0; 
+    font-family:'Noto Sans KR',sans-serif; 
+    background:transparent; 
+    color:#333; }
+.wrap { width:100%; 
+        margin:0; 
+        padding:18px; 
+        box-sizing:border-box; 
+        background:transparent; }
+h2 { margin:0 0 12px 0; font-size:18px; }
+table { width:100%; 
+    border-collapse:collapse; 
+    margin-bottom:16px; }
+th,td { border:1px solid #e6e6e6; 
+        padding:10px 8px; 
+        text-align:center; }
+th { background:#f7f9fb; color:#0b3148; font-weight:600; }
+.btn { padding:6px 14px; border:none;
+       background:#1976d2;
+       color:#fff;
+       border-radius:4px; 
+       cursor:pointer; }
+.btn:disabled { background:#aaa; }
+
+@media (max-width:800px) {
+  .wrap { padding:10px; }
+  table { display:block; width:100%; overflow:auto; }
+}

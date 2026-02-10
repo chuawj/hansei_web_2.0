@@ -1,0 +1,197 @@
+* { margin:0; padding:0; }
+html, body { height:100%; width:100%; }
+body { 
+    background: #e8e8e8; 
+    font-family: '돋움', Dotum, sans-serif; 
+    font-size:12px; 
+    color:#333;
+}
+
+/* 헤더 스타일 (이미 inline으로 처리됨) */
+
+/* 좌측 사이드바 스타일 */
+.side-col { 
+    background:#f5f5f5; 
+    padding:15px 12px; 
+    border-right:1px solid #bbb; 
+    width:210px;
+    height:100%;
+    overflow-y:auto;
+    box-sizing:border-box;
+    flex-shrink:0;
+}
+
+/* 상단 네비게이션 탭 */
+.nav { 
+    display:flex; 
+    gap:0; 
+    width:100%; 
+    height:45px;
+    border-top:2px solid #9ecae1;
+    border-bottom:1px solid #ddd;
+    background:#f8f8f8;
+    overflow:hidden;
+    align-items:stretch;
+}
+.nav .tab-btn { 
+    flex:1; 
+    padding:0 12px; 
+    border:none; 
+    border-right:1px solid #ddd;
+    background:#efefef; 
+    color:#333; 
+    font-weight:500; 
+    cursor:pointer; 
+    text-align:center; 
+    font-size:12px;
+    transition: all 0.15s ease;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    letter-spacing:-0.5px;
+}
+.nav .tab-btn:last-child { border-right:none; }
+.nav .tab-btn:hover { 
+    background:#e0e0e0;
+    color:#1565c0;
+}
+.nav .tab-btn.active { 
+    background:#fff; 
+    color:#1565c0; 
+    border-bottom:3px solid #9ecae1;
+    font-weight:600;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* Disabled-looking tab (still receives events so we can show modal) */
+.nav .tab-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 메인 콘텐츠 래퍼 */
+.main-content { 
+    width:100%; 
+    height:calc(100% - 45px); 
+    display:flex; 
+    flex-direction:column;
+    background:#e8e8e8;
+}
+
+/* 컨텐츠 패널 */
+.content-panel { 
+    background:#fff; 
+    border:1px solid #ccc;
+    border-top:none;
+    padding:0;
+    flex:1;
+    overflow:auto;
+}
+
+/* 타이머 박스 - 중성 색상 */
+.timer-box { 
+    margin-top:10px; 
+    padding:10px; 
+    border:1px solid #ddd; 
+    border-radius:3px; 
+    background:#f9f9f9; 
+    display:flex; 
+    align-items:center; 
+    gap:6px; 
+    max-width:100%;
+    flex-wrap:wrap;
+}
+.timer-box .timer-title { 
+    margin-right:4px; 
+    color:#333; 
+    font-weight:600; 
+    font-size:11px; 
+    white-space:normal;
+    line-height:1.3;
+    flex-basis:100%;
+}
+.timer-input { 
+    width:30px; 
+    padding:4px; 
+    font-size:11px;
+    border:1px solid #bbb;
+    text-align:center;
+    border-radius:2px;
+}
+.timer-actions { 
+    margin-top:6px; 
+    display:flex; 
+    gap:6px; 
+    align-items:center; 
+    flex-wrap:wrap;
+    width:100%;
+}
+.timer-status { 
+    color:#888; 
+    font-weight:500; 
+    font-size:10px; 
+    margin-left:auto;
+}
+.btn-primary.small { 
+    background:#1565c0;
+    color:#fff;
+    border:1px solid #0d47a1;
+    border-radius:2px;
+    padding:5px 8px;
+    font-size:11px;
+    cursor:pointer;
+    font-weight:600;
+    transition: all 0.1s;
+}
+.btn-primary.small:hover { background:#1051a2; }
+
+.btn-danger.small { 
+    background:#d32f2f;
+    color:#fff;
+    border:1px solid #b71c1c;
+    border-radius:2px;
+    padding:5px 8px;
+    font-size:11px;
+    cursor:pointer;
+    font-weight:600;
+    transition: all 0.1s;
+}
+.btn-danger.small:hover { background:#c62828; }
+
+.sidebar-btn {
+    display:block;
+    width:100%;
+    text-align:center;
+    background:#1565c0;
+    color:#fff;
+    padding:8px 10px;
+    border-radius:2px;
+    text-decoration:none;
+    font-weight:600;
+    margin-top:10px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+    box-sizing:border-box;
+    font-size:12px;
+    transition: all 0.1s;
+}
+.sidebar-btn:hover { 
+    background:#1051a2;
+    box-shadow:0 2px 5px rgba(0,0,0,0.15);
+}
+
+.sr { 
+    position:absolute; 
+    left:-9999px; 
+    top:auto; 
+    width:1px; 
+    height:1px; 
+    overflow:hidden; 
+}
+
+@media (max-width: 1000px) {
+  .side-col { width:180px; padding:12px 10px; }
+  .nav .tab-btn { font-size:11px; padding:0 8px; }
+}

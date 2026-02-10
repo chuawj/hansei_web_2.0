@@ -1,0 +1,42 @@
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #1976d2;
+    font-weight: bold;
+    font-size: 1.08em;
+    padding: 14px 32px;
+    border-radius: 24px;
+    box-shadow: 0 2px 12px #bbb;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    }
+.toast.show {
+    opacity: 1;
+    pointer-events: auto;
+    }
+table.tableList2, .tableList2 th, .tableList2 td {
+     font-size: 1.1em !important;
+     padding: 12px 8px !important;
+    }
+
+.search-bar {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    background:#fafafa;
+    margin-bottom:16px;
+}
+.search-bar label { font-weight:700; color:#333; margin-right:6px; }
+.search-bar select, .search-bar input[type="text"], .search-bar input[type="number"] {
+    height:34px; padding:6px 10px; border:1px solid #ccc; border-radius:4px; background:#fff; font-size:0.95em;
+}
+select#subject-list-select { background:#ffffff; }
+.search-bar #search-btn { height:34px; padding:6px 14px; background:#1976d2; color:#fff; border:none; border-radius:6px; cursor:pointer; }

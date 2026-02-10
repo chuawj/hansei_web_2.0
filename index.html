@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+  <title>한세대학교 수강신청</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+    body { 
+      font-family: '맑은 고딕', '돋움', sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+    }
+
+    /* 컨테이너 */
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 헤더 */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header .is-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+    }
+    .header .is-left span:first-child {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -1px;
+    }
+    .header .is-left .title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+    }
+    .header .is-left .title button {
+      padding: 3px 8px;
+      border: 1px solid #ccc;
+      background: #f8f8f8;
+      cursor: pointer;
+      font-size: 11px;
+      border-radius: 2px;
+    }
+
+    .header .is-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header .user-name {
+      font-weight: bold;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header .user-name .split {
+      display: inline-block;
+      width: 1px;
+      height: 12px;
+      background: #ccc;
+      margin: 0 5px;
+    }
+    .header .user-name em {
+      color: #d32f2f;
+      font-weight: 600;
+      font-style: normal;
+    }
+    .header .timer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #d32f2f;
+    }
+    .header .timer button {
+      padding: 5px 12px;
+      border: 1px solid #1976d2;
+      background: #1976d2;
+      color: #fff;
+      cursor: pointer;
+      font-size: 11px;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    .header .timer button:hover { background: #1565c0; }
+
+    /* 바디 */
+    .body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* 왼쪽 네비게이션 */
+    .nav {
+      width: 160px;
+      background: #f5f5f5;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav .btn-menu {
+      display: none;
+    }
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-menu li {
+      padding: 12px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #333;
+      transition: all 0.2s;
+    }
+    .nav-menu li:hover {
+      background: #efefef;
+      color: #1976d2;
+    }
+    .nav-menu li.is-active {
+      background: #e3f2fd;
+      color: #1976d2;
+      font-weight: 600;
+      border-left: 3px solid #1976d2;
+      padding-left: 12px;
+    }
+    .nav-icon-01::before { content: "📢"; margin-right: 4px; }
+    .nav-icon-08::before { content: "🔍"; margin-right: 4px; }
+    .nav-icon-06::before { content: "📋"; margin-right: 4px; }
+    .nav-icon-04::before { content: "📝"; margin-right: 4px; }
+
+    /* 오른쪽 콘텐츠 */
+    .contents {
+      flex: 1;
+      background: #fff;
+      overflow: auto;
+    }
+
+    /* 모달 */
+    #timer-modal {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #timer-modal > div {
+      background: #fff;
+      padding: 40px;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      min-width: 300px;
+    }
+    #timer-modal .title { font-size: 18px; font-weight: bold; color: #d32f2f; margin-bottom: 12px; }
+    #timer-modal .message { font-size: 13px; color: #333; margin-bottom: 24px; line-height: 1.6; }
+    #timer-modal button {
+      width: 100%;
+      height: 36px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* 타이머 설정 영역 */
+    #timer-section {
+      background: #fafafa;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 12px;
+    }
+    #timer-section label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    #timer-section input {
+      width: 45px;
+      padding: 5px;
+      border: 1px solid #bbb;
+      text-align: center;
+      border-radius: 2px;
+      font-size: 11px;
+    }
+    #timer-section button {
+      padding: 5px 12px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    #set-timer-btn { background: #1976d2; color: #fff; }
+    #set-timer-btn:hover { background: #1565c0; }
+    #reset-btn { background: #d32f2f; color: #fff; }
+    #reset-btn:hover { background: #c62828; }
+    #timer-status { color: #888; margin-left: auto; font-size: 11px; }
+
+    /* 탭 */
+    .sw-tabs {
+      list-style: none;
+      display: flex;
+      border-bottom: 2px solid #ddd;
+      background: #fafafa;
+      padding: 0;
+      margin: 0;
+    }
+    .sw-tabs li {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-right: 1px solid #ddd;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .sw-tabs li:last-child { border-right: none; }
+    .sw-tabs li:hover { background: #f0f0f0; }
+    .sw-tabs li.is-active {
+      background: #fff;
+      color: #1976d2;
+      font-weight: 600;
+      border-bottom: 2px solid #1976d2;
+      margin-bottom: -2px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 타이머 미개시 모달 -->
+  <div id="timer-modal" style="display: none;">
+    <div>
+      <div class="title">⏱ 수강신청 미개시</div>
+      <div class="message">아직 수강신청이 열리지 않았습니다.<br>상단 타이머를 설정한 후<br>시간이 되면 접근해주세요.</div>
+      <button onclick="document.getElementById('timer-modal').style.display='none'">확인</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 헤더 -->
+    <div class="header">
+      <div class="is-left">
+        <span>2026년도 1학기</span>
+        <span class="title">
+          시간 : <span id="server-time">2026-02-10 15:33:42</span>
+        </span>
+      </div>
+      <div class="is-right">
+        <div class="user-name">
+          최현준(<span>202510080</span>)
+          <span class="split"></span>
+          2학년
+          <span class="split"></span>
+          총신청 : <em id="total-credit">0</em>학점
+        </div>
+        <div class="timer">
+          <span id="timer-display">설정 필요</span>
+          <button id="timer-btn" style="display:none;">연장하기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 타이머 설정 -->
+    <div id="timer-section">
+      <label>
+        <span style="font-weight:600;">오픈 시간:</span>
+        <input type="number" id="timer-hour" min="0" max="23" value="0" placeholder="시">
+        <span>:</span>
+        <input type="number" id="timer-min" min="0" max="59" value="0" placeholder="분">
+        <span>:</span>
+        <input type="number" id="timer-sec" min="0" max="59" value="0" placeholder="초">
+      </label>
+      <button id="set-timer-btn">설정</button>
+      <button id="reset-btn">초기화</button>
+      <span id="timer-status"></span>
+    </div>
+
+    <!-- 바디 (네비게이션 + 콘텐츠) -->
+    <div class="body">
+      <!-- 왼쪽 네비게이션 -->
+      <div class="nav">
+        <ul class="nav-menu">
+          <li class="is-active" data-page="notice">
+            <i class="nav-icon-01"></i><span>공지사항</span>
+          </li>
+          <li data-page="subject">
+            <i class="nav-icon-08"></i><span>조회</span>
+          </li>
+          <li data-page="basket">
+            <i class="nav-icon-06"></i><span>예비수강</span>
+          </li>
+          <li data-page="register">
+            <i class="nav-icon-04"></i><span>수강신청</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 오른쪽 콘텐츠 -->
+      <div class="contents">
+        <iframe id="main-frame" src="front/notice.html"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabMap = {
+      notice: 'front/notice.html',
+      subject: 'front/subject.html',
+      basket: 'front/basket.html',
+      register: 'front/register.html'
+    };
+
+    let timerInterval = null;
+    window.globalOpenTime = null;
+
+    // 네비게이션 클릭
+    document.querySelectorAll('.nav-menu li').forEach(li => {
+      li.onclick = function() {
+        const pageType = this.dataset.page;
+        
+        if (pageType === 'register' && !window.globalOpenTime) {
+          document.getElementById('timer-modal').style.display = 'flex';
+          return;
+        }
+
+        document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('is-active'));
+        this.classList.add('is-active');
+        document.getElementById('main-frame').src = tabMap[pageType];
+      };
+    });
+
+    // 타이머 설정
+    document.getElementById('set-timer-btn').onclick = function() {
+      const hour = parseInt(document.getElementById('timer-hour').value, 10) || 0;
+      const min = parseInt(document.getElementById('timer-min').value, 10) || 0;
+      const sec = parseInt(document.getElementById('timer-sec').value, 10) || 0;
+
+      const now = new Date();
+      let openHour = now.getHours() + hour;
+      let openMin = now.getMinutes() + min;
+      let openSec = now.getSeconds() + sec;
+
+      if (openSec >= 60) {
+        openMin += Math.floor(openSec / 60);
+        openSec = openSec % 60;
+      }
+      if (openMin >= 60) {
+        openHour += Math.floor(openMin / 60);
+        openMin = openMin % 60;
+      }
+      if (openHour >= 24) {
+        openHour = openHour % 24;
+      }
+
+      const newOpenTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), openHour, openMin, openSec);
+      if (newOpenTime <= now) {
+        newOpenTime.setDate(newOpenTime.getDate() + 1);
+      }
+
+      window.globalOpenTime = newOpenTime;
+      if (timerInterval) clearInterval(timerInterval);
+      updateTimer();
+    };
+
+    // 초기화
+    document.getElementById('reset-btn').onclick = function() {
+      localStorage.removeItem('registerList');
+      localStorage.removeItem('basketList');
+      window.globalOpenTime = null;
+      if (timerInterval) clearInterval(timerInterval);
+      document.getElementById('timer-display').textContent = '설정 필요';
+      document.getElementById('timer-status').textContent = '';
+    };
+
+    // 타이머 업데이트
+    function updateTimer() {
+      if (!window.globalOpenTime) return;
+      
+      const update = () => {
+        const now = new Date();
+        let diff = Math.floor((window.globalOpenTime - now) / 1000);
+        
+        if (diff <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timer-display').textContent = '00:00 (오픈됨)';
+          document.getElementById('timer-status').textContent = '';
+        } else {
+          const h = Math.floor(diff / 3600);
+          const m = Math.floor((diff % 3600) / 60);
+          const s = diff % 60;
+          document.getElementById('timer-display').textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+      };
+      
+      update();
+      timerInterval = setInterval(update, 500);
+    }
+
+    // 총 학점 업데이트
+    function updateTotalCredit() {
+      try {
+        const registerList = JSON.parse(localStorage.getItem('registerList') || '[]');
+        const totalCredit = registerList.reduce((sum, course) => sum + parseInt(course.credit, 10), 0);
+        document.getElementById('total-credit').textContent = totalCredit;
+      } catch (e) {
+        console.error('Credit error:', e);
+      }
+    }
+
+    // 서버 시간 표시 (현재 시간)
+    function updateServerTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const date = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('server-time').textContent = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+    }
+
+    updateServerTime();
+    setInterval(updateServerTime, 1000);
+    setInterval(updateTotalCredit, 500);
+    updateTotalCredit();
+  </script>
+</body>
+</html>
