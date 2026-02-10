@@ -1,13 +1,258 @@
-* { margin:0; padding:0; }
-html, body { height:100%; width:100%; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; }
 body { 
-    background: #e8e8e8; 
-    font-family: '돋움', Dotum, sans-serif; 
-    font-size:12px; 
-    color:#333;
+  font-family: '맑은 고딕', '돋움', sans-serif;
+  font-size: 12px;
+  color: #333;
+  background: #fff;
 }
 
-/* 헤더 스타일 (이미 inline으로 처리됨) */
+/* 컨테이너 */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* 헤더 */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header .is-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 13px;
+}
+.header .is-left span:first-child {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+.header .is-left .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+.header .is-left .title button {
+  padding: 3px 8px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 2px;
+}
+
+.header .is-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header .user-name {
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header .user-name .split {
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: #ccc;
+  margin: 0 5px;
+}
+.header .user-name em {
+  color: #d32f2f;
+  font-weight: 600;
+  font-style: normal;
+}
+.header .timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #d32f2f;
+}
+.header .timer button {
+  padding: 5px 12px;
+  border: 1px solid #1976d2;
+  background: #1976d2;
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.header .timer button:hover { background: #1565c0; }
+
+/* 바디 */
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 왼쪽 네비게이션 */
+.nav {
+  width: 160px;
+  background: #f5f5f5;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+.nav .btn-menu {
+  display: none;
+}
+.nav-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.nav-menu li {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #333;
+  transition: all 0.2s;
+}
+.nav-menu li:hover {
+  background: #efefef;
+  color: #1976d2;
+}
+.nav-menu li.is-active {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+  border-left: 3px solid #1976d2;
+  padding-left: 12px;
+}
+.nav-icon-01::before { content: "📢"; margin-right: 4px; }
+.nav-icon-08::before { content: "🔍"; margin-right: 4px; }
+.nav-icon-06::before { content: "📋"; margin-right: 4px; }
+.nav-icon-04::before { content: "📝"; margin-right: 4px; }
+
+/* 오른쪽 콘텐츠 */
+.contents {
+  flex: 1;
+  background: #fff;
+  overflow: auto;
+}
+
+/* 모달 */
+#timer-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#timer-modal > div {
+  background: #fff;
+  padding: 40px;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  min-width: 300px;
+}
+#timer-modal .title { font-size: 18px; font-weight: bold; color: #d32f2f; margin-bottom: 12px; }
+#timer-modal .message { font-size: 13px; color: #333; margin-bottom: 24px; line-height: 1.6; }
+#timer-modal button {
+  width: 100%;
+  height: 36px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* 타이머 설정 영역 */
+#timer-section {
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+}
+#timer-section label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+#timer-section input {
+  width: 45px;
+  padding: 5px;
+  border: 1px solid #bbb;
+  text-align: center;
+  border-radius: 2px;
+  font-size: 11px;
+}
+#timer-section button {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+#set-timer-btn { background: #1976d2; color: #fff; }
+#set-timer-btn:hover { background: #1565c0; }
+#reset-btn { background: #d32f2f; color: #fff; }
+#reset-btn:hover { background: #c62828; }
+#timer-status { color: #888; margin-left: auto; font-size: 11px; }
+
+/* 탭 */
+.sw-tabs {
+  list-style: none;
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  background: #fafafa;
+  padding: 0;
+  margin: 0;
+}
+.sw-tabs li {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-right: 1px solid #ddd;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.sw-tabs li:last-child { border-right: none; }
+.sw-tabs li:hover { background: #f0f0f0; }
+.sw-tabs li.is-active {
+  background: #fff;
+  color: #1976d2;
+  font-weight: 600;
+  border-bottom: 2px solid #1976d2;
+  margin-bottom: -2px;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 
 /* 좌측 사이드바 스타일 */
 .side-col { 
