@@ -226,7 +226,7 @@
           <tbody>
             <tr>
               <th>학부</th>
-              <td><select id="dept-filter"><option value="">전체</option></select></td>
+              <td><select id="dept-filter"></select></td>
               <th>학과</th>
               <td><select id="major-filter"><option value="">전체</option></select></td>
               <th>검색</th>
@@ -390,7 +390,7 @@
 
     // 학부 초기화
     function initDepts() {
-      const depts = [...new Set(allSubjects.map(s => s.dept))].sort();
+      const depts = [...new Set(allSubjects.map(s => s.dept).filter(d => d && d.trim()))].sort();
       const select = document.getElementById('dept-filter');
       depts.forEach(d => {
         const opt = document.createElement('option');

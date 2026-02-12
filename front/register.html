@@ -14,14 +14,23 @@
       padding: 15px;
     }
 
-    /* 탭 */
-    .sw-tabs {
+    /* 탭 컨테이너 */
+    .tabs-container {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
       border-bottom: 1px solid #ddd;
       background: #fafafa;
       padding: 10px 20px;
+      gap: 20px;
+    }
+
+    /* 탭 */
+    .sw-tabs {
+      display: flex;
       list-style: none;
       margin: 0;
+      gap: 0;
     }
     .sw-tabs li {
       padding: 8px 20px;
@@ -42,6 +51,55 @@
 
     .sw-tab-contents > div { display: none; }
     .sw-tab-contents > div.is-active { display: block; }
+
+    /* 빠른신청 */
+    .quick-request {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      white-space: nowrap;
+      padding: 0;
+    }
+    .quick-request label {
+      font-weight: 700;
+      color: #d32f2f;
+      font-size: 12px;
+      margin: 0;
+    }
+    .quick-request .code-input {
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 12px;
+      width: 150px;
+      background: #fff;
+    }
+    .quick-request .separator {
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .quick-request .class-input {
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 12px;
+      width: 60px;
+      background: #fff;
+      text-align: center;
+    }
+    .quick-request button {
+      padding: 6px 18px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 80px;
+    }
+    .quick-request button:hover { background: #1565c0; }
 
     /* 폼 */
     .form-search {
@@ -181,16 +239,64 @@
     }
 
     .txt-red { color: #d32f2f; font-weight: 600; }
+    /* 대기열 모달 스타일 (메시지형) - index 메시지 모달과 비율/간격 일치 */
+    #queue-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      display: flex;
+    }
+    #queue-modal > div {
+      background: #fff;
+      padding: 40px;
+      border-radius: 4px;
+      min-width: 320px;
+      max-width: 640px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    #queue-modal .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #d32f2f;
+      margin-bottom: 12px;
+    }
+    #queue-modal .message {
+      font-size: 13px;
+      color: #333;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
-  <!-- 탭 -->
-  <ul class="sw-tabs">
-    <li data-tab="tab-1" class="is-active">개설과목</li>
-    <li data-tab="tab-2">예비수강내역</li>
-    <li data-tab="tab-3">수강신청내역</li>
-  </ul>
+  <!-- 탭 + 빠른신청 -->
+  <div class="tabs-container">
+    <ul class="sw-tabs">
+      <li data-tab="tab-1" class="is-active">개설과목</li>
+      <li data-tab="tab-2">예비수강내역</li>
+      <li data-tab="tab-3">수강신청내역</li>
+    </ul>
+    <div class="quick-request">
+      <label>빠른신청</label>
+      <span style="color: #666;">과목코드.분반 :</span>
+      <input type="text" id="quick-code" class="code-input" placeholder="" />
+      <span class="separator">-</span>
+      <input type="text" id="quick-class" class="class-input" placeholder="001" />
+      <button onclick="quickAddToRegister()">신청</button>
+    </div>
+  </div>
 
+    <!-- 대기열 모달 (메시지 스타일) -->
+    <div id="queue-modal" style="display:none;">
+      <div>
+        <div class="title" id="queue-title">신청 대기</div>
+        <div class="message" id="queue-message">잠시만 기다려주세요... (0초)</div>
+      </div>
+    </div>
   <div class="sw-tab-contents">
     <!-- 탭 1: 개설과목 + 수강신청 내역 -->
     <div id="tab-1" class="is-active">
@@ -200,7 +306,7 @@
           <tbody>
             <tr>
               <th>학부</th>
-              <td><select id="dept-filter"><option value="">전체</option></select></td>
+              <td><select id="dept-filter"></select></td>
               <th>학과</th>
               <td><select id="major-filter"><option value="">전체</option></select></td>
               <th>검색</th>
@@ -382,8 +488,17 @@
   </div>
 
   <script src="../js/data_from_real.js"></script>
+  <script src="../js/queue.js"></script>
   <script>
-    let allSubjects = subjects || [];
+    let allSubjects = [];
+    
+    // 데이터 로드 확인
+    if (typeof subjects !== 'undefined' && Array.isArray(subjects)) {
+      allSubjects = subjects;
+      console.log('allSubjects loaded:', allSubjects.length, 'items');
+    } else {
+      console.error('subjects is not defined or not an array');
+    }
 
     // 탭 전환
     document.querySelectorAll('.sw-tabs li').forEach(li => {
@@ -399,49 +514,147 @@
       };
     });
 
-    // 학부 초기화
+    // 학부 초기화 (전체 과목 기준 + 예비수강 옵션)
     function initDepts() {
-      const depts = [...new Set(allSubjects.map(s => s.dept))].sort();
+      console.log('[initDepts] 함수 호출됨');
       const select = document.getElementById('dept-filter');
-      depts.forEach(d => {
+      console.log('[initDepts] select element:', select);
+      
+      if (!select) {
+        console.error('[initDepts] dept-filter element를 찾을 수 없습니다');
+        return;
+      }
+      
+      console.log('[initDepts] allSubjects.length:', allSubjects.length);
+      if (!allSubjects || allSubjects.length === 0) {
+        console.error('[initDepts] allSubjects가 비어있거나 로드되지 않음');
+        return;
+      }
+      
+      select.innerHTML = ''; // 기존 옵션 초기화
+      console.log('[initDepts] select.innerHTML 초기화됨');
+      
+      // 예비수강 옵션 추가 (학년 확인)
+      const grade = localStorage.getItem('userGrade') || '2';
+      const basketOpt = document.createElement('option');
+      basketOpt.value = 'basket';
+      basketOpt.textContent = '예비수강';
+      
+      // 1학년이면 비활성화
+      if (grade === '1') {
+        basketOpt.disabled = true;
+      }
+      select.appendChild(basketOpt);
+      console.log('[initDepts] 예비수강 option 추가됨');
+      
+      // 전체 과목의 학부 추가
+      const depts = [...new Set(allSubjects
+        .map(s => s.dept)
+        .filter(d => d && String(d).trim()))]
+        .sort();
+      
+      console.log('[initDepts] 추출된 대족:', depts);
+      
+      if (depts.length === 0) {
+        console.warn('[initDepts] 추출된 대족이 없습니다');
+      }
+      
+      depts.forEach((d, index) => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
         select.appendChild(opt);
+        console.log('[initDepts] option', index + 1, 'added:', d);
       });
+      
+      console.log('[initDepts] 완료. 추가된 option 수(예비수강 포함):', select.options.length);
     }
 
-    // 학과 초기화
+    // 예비수강 옵션 상태 업데이트 (학년 변경 감시)
+    function updateBasketOptionStatus() {
+      const select = document.getElementById('dept-filter');
+      if (!select) return;
+      
+      const basketOption = Array.from(select.options).find(opt => opt.value === 'basket');
+      if (basketOption) {
+        const grade = localStorage.getItem('userGrade') || '2';
+        basketOption.disabled = (grade === '1');
+      }
+    }
+
+    // 100ms마다 예비수강 옵션 상태 확인 (학년 변경 감지)
+    setInterval(updateBasketOptionStatus, 100);
+
+    // 학과 초기화 (예비수강 또는 전체 과목 기준)
     function initMajors() {
+      console.log('[initMajors] 함수 호출됨');
       const deptSelect = document.getElementById('dept-filter');
       const majorSelect = document.getElementById('major-filter');
       
+      console.log('[initMajors] deptSelect:', deptSelect);
+      console.log('[initMajors] majorSelect:', majorSelect);
+      
+      if (!deptSelect || !majorSelect) {
+        console.error('[initMajors] select 요소를 찾을 수 없음');
+        return;
+      }
+      
       deptSelect.onchange = function() {
+        console.log('[initMajors] onchange 이벤트 발생, 선택된 값:', this.value);
         majorSelect.innerHTML = '<option value="">전체</option>';
         if (this.value) {
-          const majors = [...new Set(allSubjects.filter(s => s.dept === this.value).map(s => s.major))].sort();
-          majors.forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m;
-            opt.textContent = m;
-            majorSelect.appendChild(opt);
-          });
+          if (this.value === 'basket') {
+            // 예비수강 선택: basketList에서 학과 추출
+            const basketList = JSON.parse(localStorage.getItem('basketList') || '[]');
+            const majors = [...new Set(basketList.map(s => s.major).filter(m => m && String(m).trim()))].sort();
+            console.log('[initMajors] basketList 학과:', majors);
+            majors.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = m;
+              majorSelect.appendChild(opt);
+            });
+          } else {
+            // 특정 학부 선택: allSubjects에서 학과 추출
+            const majors = [...new Set(allSubjects.filter(s => s.dept === this.value).map(s => s.major).filter(m => m && String(m).trim()))].sort();
+            console.log('[initMajors] 필터링된 학과:', majors);
+            majors.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = m;
+              majorSelect.appendChild(opt);
+            });
+          }
         }
       };
+      console.log('[initMajors] 완료');
     }
 
-    // 과목 필터링
+    // 과목 필터링 (예비수강 또는 전체 과목)
     function filterCourses() {
       const dept = document.getElementById('dept-filter').value;
       const major = document.getElementById('major-filter').value;
       const search = document.getElementById('search-input').value.toLowerCase();
 
-      let filtered = allSubjects.filter(s => {
-        if (dept && s.dept !== dept) return false;
-        if (major && s.major !== major) return false;
-        if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
-        return true;
-      });
+      let filtered = [];
+      
+      if (dept === 'basket') {
+        // 예비수강 선택: basketList에서 필터링
+        const basketList = JSON.parse(localStorage.getItem('basketList') || '[]');
+        filtered = basketList.filter(s => {
+          if (major && s.major !== major) return false;
+          if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+          return true;
+        });
+      } else if (dept) {
+        // 특정 학부 선택: allSubjects에서 필터링
+        filtered = allSubjects.filter(s => {
+          if (s.dept !== dept) return false;
+          if (major && s.major !== major) return false;
+          if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+          return true;
+        });
+      }
 
       document.getElementById('total-count').textContent = filtered.length;
       const tbody = document.getElementById('course-table');
@@ -477,15 +690,23 @@
 
     // 수강신청 추가
     function addToRegister(code, name, dept, major, year, type, credit, cap) {
-      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
-      if (list.find(s => s.code === code)) {
-        alert('이미 신청한 과목입니다.');
-        return;
-      }
-      list.push({ code, name, dept, major, year, type, credit, cap });
-      localStorage.setItem('registerList', JSON.stringify(list));
-      filterCourses();
-      renderRegisterList();
+      QueueModal.showApply(function() {
+        // 빈 값 검증
+        if (!dept || !dept.trim() || !major || !major.trim()) {
+          alert('유효한 과목이 아닙니다.');
+          return;
+        }
+
+        let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+        if (list.find(s => s.code === code)) {
+          alert('이미 신청한 과목입니다.');
+          return;
+        }
+        list.push({ code, name, dept, major, year, type, credit, cap });
+        localStorage.setItem('registerList', JSON.stringify(list));
+        filterCourses();
+        renderRegisterList();
+      });
     }
 
     // 수강신청 삭제
@@ -621,14 +842,69 @@
       renderRegisterListInTab3();
     }
 
+    // 빠른수강신청 함수
+    function quickAddToRegister() {
+      const code = document.getElementById('quick-code').value.trim();
+      const classNum = document.getElementById('quick-class').value.trim();
+
+      if (!code) {
+        alert('과목코드를 입력해주세요.');
+        return;
+      }
+
+      // allSubjects에서 해당 과목 찾기
+      const subject = allSubjects.find(s => s.code === code);
+      if (!subject) {
+        alert('해당 과목을 찾을 수 없습니다.');
+        return;
+      }
+
+      // 이미 수강신청에 있는지 확인
+      let registerList = JSON.parse(localStorage.getItem('registerList') || '[]');
+      if (registerList.find(s => s.code === code)) {
+        alert('이미 수강신청에 있습니다.');
+        return;
+      }
+
+      // 수강신청 추가 (대기열 처리 포함)
+      QueueModal.showApply(function() {
+        registerList.push(subject);
+        localStorage.setItem('registerList', JSON.stringify(registerList));
+
+        alert('수강신청에 추가되었습니다.');
+        document.getElementById('quick-code').value = '';
+        document.getElementById('quick-class').value = '';
+        document.getElementById('quick-code').focus();
+
+        // 목록 업데이트
+        filterCourses();
+        renderRegisterList();
+        updateTotalCredit();
+      });
+    }
+
     // Tab 2: basketList 렌더링 (제거됨)
 
     // 초기화
-    initDepts();
-    initMajors();
-    renderRegisterList();
-    renderBasketListInTab2();
-    renderRegisterListInTab3();
+    function initializeApp() {
+      console.log('initializeApp called, allSubjects.length:', allSubjects.length);
+      initDepts();
+      initMajors();
+      renderRegisterList();
+      renderBasketListInTab2();
+      renderRegisterListInTab3();
+    }
+    
+    // DOM 로드 후 초기화
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded event fired');
+        initializeApp();
+      });
+    } else {
+      console.log('DOM already loaded, initializing now');
+      initializeApp();
+    }
   </script>
 </body>
 </html>
