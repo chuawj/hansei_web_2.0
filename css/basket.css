@@ -1,21 +1,386 @@
-table.tableList2, .tableList2 th, .tableList2 td {
-  font-size: 1.1em !important;
-  padding: 12px 8px !important;
-}
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: '맑은 고딕', '돋움', sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+      padding: 15px;
+    }
 
-.search-bar {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border:1px solid #ddd;
-  border-radius:6px;
-  background:#fafafa;
-  margin-bottom:16px;
-}
-.search-bar label { font-weight:700; color:#333; margin-right:6px; }
-.search-bar select, .search-bar input[type="text"], .search-bar input[type="number"] {
-  height:34px; padding:6px 10px; border:1px solid #ccc; border-radius:4px; background:#fff; font-size:0.95em;
-}
-select#subject-list-select { background:#ffffff; }
-.search-bar #search-btn { height:34px; padding:6px 14px; background:#1976d2; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+    /* 색상 변수 */
+    :root {
+      --main-color: #1976d2;
+      --sub-color: #1565c0;
+    }
+
+    /* 탭 컨테이너 */
+    .tabs-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+      padding: 10px 20px;
+      gap: 20px;
+    }
+
+    /* 탭 */
+    .sw-tabs {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid;
+      border-color: var(--sub-color);
+      list-style: none;
+      margin: 0;
+      gap: 0;
+    }
+    .sw-tabs>li {
+      flex: 1 0 0px;
+      min-width: 0;
+      max-width: 200px;
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 35px;
+      margin-left: 4px;
+      padding-bottom: 2px;
+      border-radius: 5px 5px 0 0;
+      border: 1px solid #4700d1;
+      border-bottom: 0;
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+      line-height: 1.1;
+      text-align: center;
+      cursor: pointer;
+      transition: all .3s;
+    }
+    .sw-tabs>li:first-of-type {
+      margin-left: 0;
+    }
+    .sw-tabs>li.is-active {
+      color: #d4d4d4;
+      cursor: default;
+      transition: all .2s;
+      border-color: var(--sub-color);
+      background: var(--sub-color);
+    }
+    .sw-tabs>li.is-no-tab {
+      flex: 0 0 auto;
+      max-width: inherit;
+      margin-left: 15px;
+      border: 0;
+      background: 0 0;
+    }
+
+    .sw-tab-contents {
+      padding: 15px 0 0;
+    }
+    .sw-tab-contents>div {
+      display: none;
+      opacity: 0;
+    }
+    .sw-tab-contents>div.is-active {
+      display: block;
+      -webkit-animation: opacity 1.5s;
+      animation: opacity 1.5s;
+      opacity: 1;
+    }
+
+    /* 빠른신청 */
+    .quick-request {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      white-space: nowrap;
+      padding: 0;
+    }
+    .quick-request label {
+      font-weight: 600;
+      color: #d32f2f;
+      font-size: 11px;
+      margin: 0;
+    }
+    .quick-request .code-input {
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      font-size: 11px;
+      width: 100px;
+      background: #fff;
+    }
+    .quick-request .separator {
+      color: #333;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .quick-request .class-input {
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      font-size: 11px;
+      width: 45px;
+      background: #fff;
+      text-align: center;
+    }
+    .quick-request button {
+      padding: 4px 12px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      min-width: 60px;
+    }
+    .quick-request button:hover { background: #1565c0; }
+
+    /* 폼 */
+    .form-search {
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid #e5e5e5;
+      background: #f5f5f5;
+      text-align: left;
+    }
+    .form-search table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .form-search table th {
+      padding: 0;
+      font-size: 12px;
+      line-height: 1.2;
+      word-spacing: -1px;
+      text-align: right;
+    }
+    .form-search table td {
+      padding: 3px 0 3px 6px;
+    }
+    .form-search table td.search {
+      padding-left: 15px;
+    }
+    .form-search select, .form-search input {
+      padding: 5px;
+      border: 1px solid #bbb;
+      border-radius: 2px;
+      font-size: 11px;
+      min-width: 120px;
+    }
+    .form-search input[type="text"] {
+      min-width: 200px;
+    }
+    .form-search button {
+      padding: 5px 12px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .form-search button:hover { background: #1565c0; }
+
+    /* 라디오 그룹 */
+    .radio-group {
+        display: inline-block;
+    }
+    .radio-group input[type=radio] {
+        display: none;
+    }
+    .radio-group input[type=radio]:disabled+input+label,.radio-group input[type=radio]:disabled+label {
+        opacity: .5;
+        cursor: default;
+    }
+    .radio-group input[type=radio]:disabled+input+label:hover,.radio-group input[type=radio]:disabled+label:hover {
+        background-color: #f9f9f9;
+    }
+    .radio-group input[type=radio]:checked+input+label,.radio-group input[type=radio]:checked+label {
+        z-index: 1;
+        border-color: var(--main-color);
+        background-color: var(--main-color);
+        color: #fff;
+        cursor: default;
+    }
+    .radio-group input[type=radio]:checked+input+label:hover,.radio-group input[type=radio]:checked+label:hover {
+        background-color: var(--sub-color);
+        border-color: var(--sub-color);
+        color: #fff;
+    }
+    .radio-group input[type=radio]:checked:disabled+input+label,.radio-group input[type=radio]:checked:disabled+label {
+        opacity: .5;
+        cursor: default;
+    }
+    .radio-group input[type=radio]:checked:disabled+input+label:hover,.radio-group input[type=radio]:checked:disabled+label:hover {
+        background-color: #222;
+    }
+    .radio-group input[type=radio]+label {
+        float: left;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        touch-action: manipulation;
+        cursor: pointer;
+        overflow: hidden;
+        height: 30px;
+        margin-left: -1px;
+        padding: 0 12px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #739318;
+        background-image: none;
+        background-color: #f9f9f9;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 28px;
+        color: #444;
+        transition: all .3s;
+        outline: 0;
+        box-sizing: border-box;
+    }
+    .radio-group input[type=radio]+label:after,.radio-group input[type=radio]+label:before {
+        display: none;
+    }
+    .radio-group input[type=radio]+label:hover {
+        background-color: #f2f2f2;
+        color: #000;
+    }
+    .radio-group input[type=radio]+label:first-of-type {
+        margin-left: 0;
+        border-radius: 16px 0 0 16px;
+    }
+    .radio-group input[type=radio]+label:last-of-type {
+        border-width: 1px;
+        border-radius: 0 16px 16px 0;
+    }
+
+    /* 헤더 */
+    .sw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .sw-header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .sw-header small {
+      font-size: 11px;
+      color: #666;
+      margin-left: 8px;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+    }
+    .info-group {
+      display: flex;
+      gap: 8px;
+    }
+    .info-group label {
+      font-weight: 600;
+      color: #333;
+    }
+    .info-group .txt-red {
+      color: #d32f2f;
+      font-weight: 600;
+    }
+
+    /* 테이블 */
+    table.result-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    table.result-table thead {
+      background: #fafafa;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+    table.result-table th {
+      padding: 8px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      color: #333;
+    }
+    table.result-table td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 11px;
+    }
+    table.result-table tr:hover { background: #f5f5f5; }
+
+    /* 버튼 */
+    .btn-add, .btn-del {
+      padding: 4px 8px;
+      border: 1px solid #bbb;
+      border-radius: 2px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .btn-add {
+      color: #1976d2;
+      border-color: #1976d2;
+    }
+    .btn-add:hover { background: #1976d2; color: #fff; }
+    .btn-del {
+      color: #d32f2f;
+      border-color: #d32f2f;
+    }
+    .btn-del:hover { background: #d32f2f; color: #fff; }
+
+    /* 리스트 */
+    .list-dot {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .list-dot li {
+      padding: 3px 0;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .txt-red { color: #d32f2f; font-weight: 600; }
+    /* 대기열 모달 스타일 (메시지형) - index 메시지 모달과 비율/간격 일치 */
+    #queue-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      display: flex;
+    }
+    #queue-modal > div {
+      background: #fff;
+      padding: 40px;
+      border-radius: 4px;
+      min-width: 320px;
+      max-width: 640px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    #queue-modal .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #d32f2f;
+      margin-bottom: 12px;
+    }
+    #queue-modal .message {
+      font-size: 13px;
+      color: #333;
+      margin: 0;
+    }

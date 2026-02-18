@@ -306,4 +306,35 @@ window.onload = function() {
       }
     } catch (err) { }
   });
+
+  // 라디오 버튼 폼 전환 함수
+  function switchSearchForm(searchType) {
+    document.getElementById('idMajor').style.display = 'none';
+    document.getElementById('idIsu').style.display = 'none';
+    document.getElementById('idMultiple').style.display = 'none';
+    document.getElementById('idSearch').style.display = 'none';
+    
+    switch(searchType) {
+      case '1':
+        document.getElementById('idMajor').style.display = 'block';
+        break;
+      case '2':
+        document.getElementById('idIsu').style.display = 'block';
+        break;
+      case '3':
+        document.getElementById('idMultiple').style.display = 'block';
+        break;
+      case '0':
+        document.getElementById('idSearch').style.display = 'block';
+        break;
+    }
+  }
+  
+  // 라디오 버튼 change 이벤트
+  const radios = document.querySelectorAll('input[name="pSearchType"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      switchSearchForm(this.value);
+    });
+  });
   };

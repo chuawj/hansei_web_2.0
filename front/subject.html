@@ -4,238 +4,197 @@
   <meta charset="UTF-8">
   <title>조회</title>
   <link rel="stylesheet" href="../common/style.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: '맑은 고딕', '돋움', sans-serif;
-      font-size: 12px;
-      color: #333;
-      background: #fff;
-      padding: 15px;
-    }
-
-    /* 탭 */
-    .sw-tabs {
-      list-style: none;
-      display: flex;
-      border-bottom: 1px solid #ddd;
-      gap: 0;
-      margin-bottom: 15px;
-    }
-    .sw-tabs li {
-      padding: 10px 20px;
-      cursor: pointer;
-      border-right: 1px solid #ddd;
-      font-size: 12px;
-      transition: all 0.2s;
-      background: #fafafa;
-    }
-    .sw-tabs li:last-child { border-right: none; }
-    .sw-tabs li:hover { background: #f0f0f0; }
-    .sw-tabs li.is-active {
-      background: #fff;
-      color: #1976d2;
-      font-weight: 600;
-      border-bottom: 2px solid #1976d2;
-      margin-bottom: -1px;
-    }
-    .sw-tab-contents > div { display: none; }
-    .sw-tab-contents > div.is-active { display: block; }
-
-    /* 라디오 그룹 */
-    .radio-group {
-      display: inline-flex;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-    .radio-group input[type="radio"] {
-      display: none;
-    }
-    .radio-group label {
-      padding: 6px 12px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      cursor: pointer;
-      background: #f9f9f9;
-      font-size: 12px;
-      transition: all 0.2s;
-    }
-    .radio-group input[type="radio"]:checked + label {
-      background: #1976d2;
-      color: #fff;
-      border-color: #1976d2;
-    }
-
-    /* 폼 */
-    .form-search {
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      padding: 12px;
-      border-radius: 3px;
-      margin-bottom: 15px;
-    }
-    .form-search table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .form-search th {
-      text-align: left;
-      font-weight: 600;
-      width: auto;
-      padding: 6px;
-      white-space: nowrap;
-    }
-    .form-search td {
-      padding: 6px;
-    }
-    .form-search select, .form-search input {
-      padding: 5px;
-      border: 1px solid #bbb;
-      border-radius: 2px;
-      font-size: 11px;
-      min-width: 120px;
-    }
-    .form-search input[type="text"] {
-      min-width: 200px;
-    }
-    .form-search button {
-      padding: 5px 12px;
-      background: #1976d2;
-      color: #fff;
-      border: none;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .form-search button:hover { background: #1565c0; }
-
-    /* 헤더 */
-    .sw-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .sw-header h1 {
-      font-size: 14px;
-      font-weight: 600;
-      margin: 0;
-    }
-    .sw-header small {
-      font-size: 11px;
-      color: #666;
-      margin-left: 8px;
-    }
-    .actions {
-      display: flex;
-      gap: 15px;
-      font-size: 12px;
-    }
-    .info-group {
-      display: flex;
-      gap: 8px;
-    }
-    .info-group label {
-      font-weight: 600;
-      color: #333;
-    }
-    .info-group .txt-red {
-      color: #d32f2f;
-      font-weight: 600;
-    }
-
-    /* 테이블 */
-    table.result-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      margin-bottom: 15px;
-    }
-    table.result-table th {
-      background: #f5f5f5;
-      padding: 10px;
-      text-align: left;
-      font-weight: 600;
-      border: 1px solid #ddd;
-      font-size: 11px;
-    }
-    table.result-table td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      font-size: 12px;
-    }
-    table.result-table tr:hover { background: #f9f9f9; }
-    table.result-table tr:nth-child(even) { background: #fafafa; }
-
-    /* 버튼 */
-    .btn-add, .btn-del {
-      padding: 4px 10px;
-      border: none;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .btn-add {
-      background: #1976d2;
-      color: #fff;
-    }
-    .btn-add:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    .btn-del {
-      background: #d32f2f;
-      color: #fff;
-    }
-
-    /* 정보 */
-    .list-dot {
-      list-style: none;
-      font-size: 11px;
-      color: #666;
-    }
-    .list-dot li {
-      margin-bottom: 6px;
-      padding-left: 12px;
-      position: relative;
-    }
-    .list-dot li:before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      color: #1976d2;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/subject.css">
 </head>
 <body>
   <!-- 탭 -->
-  <ul class="sw-tabs">
-    <li data-tab="tab-1" class="is-active">개설과목</li>
-    <li data-tab="tab-2">예비수강 내역</li>
-    <li data-tab="tab-3">수강신청 내역</li>
-  </ul>
+  <div class="tabs-container">
+    <ul class="sw-tabs">
+      <li data-tab="tab-1" class="is-active">개설과목</li>
+      <li data-tab="tab-2">예비수강 내역</li>
+      <li data-tab="tab-3">수강신청 내역</li>
+    </ul>
+  </div>
 
   <div class="sw-tab-contents">
     <!-- 탭 1: 개설과목 -->
     <div id="tab-1" class="is-active">
-      <!-- 검색 폼 -->
-      <div class="form-search">
-        <table>
-          <tbody>
-            <tr>
-              <th>학부</th>
-              <td><select id="dept-filter"></select></td>
-              <th>학과</th>
-              <td><select id="major-filter"><option value="">전체</option></select></td>
-              <th>검색</th>
-              <td><input type="text" id="search-input" placeholder="과목명(코드) 입력"></td>
-              <th></th>
-              <td><button onclick="filterCourses()">조회</button></td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- 라디오 그룹 -->
+      <div style="padding:8px 0;">
+        <div class="radio-group" id="idSearchType" style="display: inline-flex; gap:8px;">
+          <input type="radio" name="pSearchType" id="pSearchType1" value="1" checked=""><label for="pSearchType1" style="min-width: 100px;min-height: 30px;display:flex;align-items:center;justify-content:center;">전공 / 학과</label>
+          <input type="radio" name="pSearchType" id="pSearchType2" value="2"><label for="pSearchType2" style="min-width: 100px;min-height: 30px;display:flex;align-items:center;justify-content:center;">이수구분</label>
+          <input type="radio" name="pSearchType" id="pSearchType3" value="3"><label for="pSearchType3" style="min-width: 100px;min-height: 30px;display:flex;align-items:center;justify-content:center;">다전공</label>
+          <input type="radio" name="pSearchType" id="pSearchType0" value="0"><label for="pSearchType0" style="min-width: 100px;min-height: 30px;display:flex;align-items:center;justify-content:center;">과목검색</label>
+        </div>
+      </div>
+
+      <div class="form-search" id="idSearchDiv">
+        <!-- 1: 학부 / 학과 -->
+        <div id="idMajor" style="display: block;">
+          <table>
+            <colgroup>
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="200px">
+              <col width="80px">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <th id="idThSust1">학부</th>
+                <td id="idTdSust1">
+                  <select name="pSustCd1" id="pSustCd1"></select>
+                </td>
+                <th id="idThMajor1">학과</th>
+                <td id="idTdMajor1">
+                  <select name="pMajorCd1" id="pMajorCd1"><option value="">전체학과</option></select>
+                </td>
+                <th>검색</th>
+                <td>
+                  <input name="pLectNm1" id="pLectNm1" style="width: 200px;" placeholder="과목명(코드)를 입력하세요">
+                </td>
+                <th></th>
+                <td><button type="button" class="btn-sub" id="btnSearch1" onclick="filterCourses('1')">조회</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2: 이수구분 -->
+        <div id="idIsu" style="display: none;">
+          <table>
+            <colgroup>
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="200px">
+              <col width="80px">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <th>이수구분</th>
+                <td>
+                  <select name="pIsuCd2" id="pIsuCd2"><option value="전공필수">전공필수</option><option value="전공선택">전공선택</option><option value="전공기초">전공기초</option><option value="교양필수">교양필수</option><option value="교양선택">교양선택</option><option value="채플">채플</option><option value="연계필수">연계필수</option><option value="연계선택">연계선택</option></select>
+                </td>
+                <th id="idThSelect2" style="display: none;">교양선택</th>
+                <td id="idTdSelect2" style="display: none;">
+                  <select name="pSelectCd2" id="pSelectCd2"><option value="CMF024001">핵심</option><option value="CMF024002">자유</option></select>
+                </td>
+                <th id="idThDown2" style="display: none;">하위영역</th>
+                <td id="idTdDown2" style="display: none;">
+                  <select name="pDownCd2" id="pDownCd2"><option value="CMF004028">C(창의성)</option><option value="CMF004029">H(나눔·배려)</option><option value="CMF004030">A(비판·분석적사고)</option><option value="CMF004031">M(소통)</option><option value="CMF004032">P(문제해결)</option></select>
+                </td>
+              </tr>
+              <tr>
+                <th id="idThSust2">학부</th>
+                <td id="idTdSust2">
+                  <select name="pSustCd2" id="pSustCd2"></select>
+                </td>
+                <th id="idThMajor2">학과</th>
+                <td id="idTdMajor2">
+                  <select name="pMajorCd2" id="pMajorCd2"><option value="">전체학과</option></select>
+                </td>
+                <th id="idThArea2" style="display: none;">영역</th>
+                <td id="idTdArea2" style="display: none;">
+                  <select name="pAreaCd2" id="pAreaCd2"><option value="CMF004028">C(창의성)</option><option value="CMF004029">H(나눔·배려)</option><option value="CMF004030">A(비판·분석적사고)</option><option value="CMF004031">M(소통)</option><option value="CMF004032">P(문제해결)</option><option value="CMF004033">융복합</option><option value="">전체</option></select>
+                </td>
+                <th>검색</th>
+                <td>
+                  <input name="pLectNm2" id="pLectNm2" style="width: 200px;" placeholder="과목명(코드)를 입력하세요">
+                </td>
+                <th></th>
+                <td><button type="button" class="btn-sub" id="btnSearch2" onclick="filterCourses('2')">조회</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3: 다전공 -->
+        <div id="idMultiple" style="display: none;">
+          <table>
+            <colgroup>
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="150px">
+              <col width="80px">
+              <col width="220px">
+              <col width="80px">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <th id="idThMultiple3">다전공</th>
+                <td id="idTdMultiple3">
+                  <select name="pMultiCd3" id="pMultiCd3"><option value="CMF005001">부전공</option><option value="CMF005002">복수전공</option><option value="CMF005008">융복합전공</option><option value="CMF005009">마이크로전공</option></select>
+                </td>
+                <th id="idThSust3">학부</th>
+                <td id="idTdSust3">
+                  <select name="pSustCd3" id="pSustCd3"></select>
+                </td>
+                <th id="idThMajor3">학과</th>
+                <td id="idTdMajor3">
+                  <select name="pMajorCd3" id="pMajorCd3"><option value="">전체학과</option></select>
+                </td>
+              </tr>
+              <tr>
+                <th id="idThComposite3" style="display: none;">융복합</th>
+                <td id="idTdComposite3" style="display: none;">
+                  <select name="pComplexCd3" id="pComplexCd3"><option value="">선택안함</option><option value="U0130010000">청소년전공</option><option value="U0130020000">글로벌외국어통상무역전공</option><option value="U0130030000">스포츠헬스케어전공</option><option value="U0130040000">멀티미디어사운드&뮤직</option></select>
+                </td>
+                <th id="idThMicro3" style="display: none;">마이크로전공</th>
+                <td id="idTdMicro3" style="display: none;">
+                  <select name="pMicroCd3" id="pMicroCd3"><option value="">선택안함</option><option value="CMI012001">디지털마케팅전문가과정</option><option value="CMI012002">창의융합예술교육전문학위과정</option><option value="CMI012003">HSK교육전문가과정</option></select>
+                </td>
+                <th>검색</th>
+                <td>
+                  <input name="pLectNm3" id="pLectNm3" style="width: 200px;" placeholder="과목명(코드)를 입력하세요">
+                </td>
+                <th></th>
+                <td><button type="button" class="btn-sub" id="btnSearch3" onclick="filterCourses('3')">조회</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 4: 과목검색 -->
+        <div id="idSearch" style="display: none;">
+          <table>
+            <colgroup>
+              <col width="80px">
+              <col width="280px">
+              <col width="10px">
+              <col width="120px">
+              <col width="10px">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <th>조회</th>
+                <td>
+                  <input name="pLectNm0" id="pLectNm0" style="width: 250px;" placeholder="과목명(코드)를 입력하세요">
+                </td>
+                <th></th>
+                <td><button type="button" class="btn-sub" id="btnSearch0" onclick="filterCourses('0')">조회</button></td>
+                <th></th>
+                <td>
+                  <p style="font-size: 11px; color: #1976d2; margin: 0;"><b>검색명을 입력하고 엔터를 누르거나 조회 버튼을 눌러 조회하세요</b></p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- 결과 -->
@@ -372,9 +331,51 @@
 
   <script src="../js/data_from_real.js"></script>
   <script>
-    let allSubjects = subjects || [];
+    let allSubjects = [];
+    let currentSearchType = '1';
+    
+    if (typeof subjects !== 'undefined' && Array.isArray(subjects)) {
+      allSubjects = subjects;
+      console.log('allSubjects loaded:', allSubjects.length, 'items');
+    } else {
+      console.error('subjects is not defined or not an array');
+    }
 
-    // 탭 전환
+    function initRadioFormSwitch() {
+      const radios = document.querySelectorAll('input[name="pSearchType"]');
+      radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          currentSearchType = this.value;
+          switchSearchForm(this.value);
+        });
+      });
+    }
+
+    function switchSearchForm(searchType) {
+      document.getElementById('idMajor').style.display = 'none';
+      document.getElementById('idIsu').style.display = 'none';
+      document.getElementById('idMultiple').style.display = 'none';
+      document.getElementById('idSearch').style.display = 'none';
+
+      console.log('[switchSearchForm] searchType:', searchType);
+      switch(searchType) {
+        case '1':
+          document.getElementById('idMajor').style.display = 'block';
+          break;
+        case '2':
+          document.getElementById('idIsu').style.display = 'block';
+          fnComboMajorFilter('2');
+          break;
+        case '3':
+          document.getElementById('idMultiple').style.display = 'block';
+          fnComboMajorFilter('3');
+          break;
+        case '0':
+          document.getElementById('idSearch').style.display = 'block';
+          break;
+      }
+    }
+
     document.querySelectorAll('.sw-tabs li').forEach(li => {
       li.onclick = function() {
         const tabId = this.dataset.tab;
@@ -383,35 +384,320 @@
         this.classList.add('is-active');
         document.getElementById(tabId).classList.add('is-active');
         
-        if (tabId === 'tab-2') renderBasketList();
-        if (tabId === 'tab-3') renderRegisterList();
+        if (tabId === 'tab-2') renderBasketListInTab2();
+        if (tabId === 'tab-3') renderRegisterListInTab3();
       };
     });
 
-    // 학부 초기화
-    function initDepts() {
-      const depts = [...new Set(allSubjects.map(s => s.dept).filter(d => d && d.trim()))].sort();
-      const select = document.getElementById('dept-filter');
+    function initDepts1() {
+      const select = document.getElementById('pSustCd1');
+      if (!select) {
+        console.error('[initDepts1] pSustCd1 select이 없음!');
+        return;
+      }
+      
+      select.innerHTML = '';
+      const depts = [...new Set(allSubjects.map(s => s.dept).filter(d => d && String(d).trim()))].sort();
+      
       depts.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
         select.appendChild(opt);
       });
+
+      console.log('[initDepts1] pSustCd1 옵션 추가됨:', depts.length);
+
+      if (select.options.length > 0) {
+        select.value = select.options[0].value;
+        console.log('[initDepts1] pSustCd1 초기값 설정:', select.options[0].value);
+        
+        select.addEventListener('change', function() {
+          console.log('[pSustCd1 change event] value:', this.value);
+          fnComboMajorFilter('1');
+        });
+        
+        console.log('[initDepts1] fnComboMajorFilter(1) 호출');
+        fnComboMajorFilter('1');
+      }
     }
 
-    // 과목 필터링
-    function filterCourses() {
-      const dept = document.getElementById('dept-filter').value;
-      const major = document.getElementById('major-filter').value;
-      const search = document.getElementById('search-input').value.toLowerCase();
+    function fnComboMajorFilter(type) {
+      console.log('[fnComboMajorFilter] type:', type);
+      
+      if (type === '1') {
+        const deptSelect = document.getElementById('pSustCd1');
+        const majorSelect = document.getElementById('pMajorCd1');
+        const deptValue = deptSelect?.value;
+        
+        console.log('[fnComboMajorFilter-1] deptValue:', deptValue);
+        
+        majorSelect.innerHTML = '<option value="">전체학과</option>';
+        
+        if (deptValue) {
+          const majors = [...new Set(allSubjects.filter(s => s.dept === deptValue).map(s => s.major).filter(m => m && String(m).trim()))].sort();
+          console.log('[fnComboMajorFilter-1] majors:', majors);
+          majors.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            majorSelect.appendChild(opt);
+          });
+        }
+      }
+      
+      if (type === '2') {
+        const deptSelect = document.getElementById('pSustCd2');
+        const majorSelect = document.getElementById('pMajorCd2');
+        const deptValue = deptSelect?.value;
+        
+        console.log('[fnComboMajorFilter-2] deptValue:', deptValue);
+        
+        if (!majorSelect) {
+          console.error('[fnComboMajorFilter-2] majorSelect(pMajorCd2)이 없음!');
+          return;
+        }
+        
+        majorSelect.innerHTML = '<option value="">전체학과</option>';
+        
+        if (deptValue) {
+          const majors = [...new Set(allSubjects.filter(s => s.dept === deptValue).map(s => s.major).filter(m => m && String(m).trim()))].sort();
+          console.log('[fnComboMajorFilter-2] majors:', majors);
+          majors.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            majorSelect.appendChild(opt);
+          });
+        }
+      }
+      
+      if (type === '3') {
+        const deptSelect = document.getElementById('pSustCd3');
+        const majorSelect = document.getElementById('pMajorCd3');
+        const deptValue = deptSelect?.value;
+        
+        console.log('[fnComboMajorFilter-3] deptValue:', deptValue);
+        
+        if (!majorSelect) {
+          console.error('[fnComboMajorFilter-3] majorSelect(pMajorCd3)이 없음!');
+          return;
+        }
+        
+        majorSelect.innerHTML = '<option value="">전체학과</option>';
+        
+        if (deptValue) {
+          const majors = [...new Set(allSubjects.filter(s => s.dept === deptValue).map(s => s.major).filter(m => m && String(m).trim()))].sort();
+          console.log('[fnComboMajorFilter-3] majors:', majors);
+          majors.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            majorSelect.appendChild(opt);
+          });
+        }
+      }
+    }
 
-      let filtered = allSubjects.filter(s => {
-        if (dept && s.dept !== dept) return false;
-        if (major && s.major !== major) return false;
-        if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
-        return true;
+    function fnComboIsuFilter(type) {
+      console.log('[fnComboIsuFilter] type:', type);
+      if (type === '2') {
+        const isuSelect = document.getElementById('pIsuCd2');
+        const isuValue = isuSelect.value;
+        
+        const selectRow = document.getElementById('idThSelect2');
+        const downRow = document.getElementById('idThDown2');
+        
+        if (isuValue === '교양선택') {
+          selectRow.style.display = '';
+          document.getElementById('idTdSelect2').style.display = '';
+          downRow.style.display = '';
+          document.getElementById('idTdDown2').style.display = '';
+        } else {
+          selectRow.style.display = 'none';
+          document.getElementById('idTdSelect2').style.display = 'none';
+          downRow.style.display = 'none';
+          document.getElementById('idTdDown2').style.display = 'none';
+        }
+      }
+    }
+
+    function initIsuTypes() {
+      const select = document.getElementById('pIsuCd2');
+      if (!select) return;
+      
+      select.innerHTML = '';
+      const types = [
+        { text: '전공필수' },
+        { text: '전공선택' },
+        { text: '전공기초' },
+        { text: '교양필수' },
+        { text: '교양선택' },
+        { text: '채플' },
+        { text: '연계필수' },
+        { text: '연계선택' }
+      ];
+      
+      types.forEach(type => {
+        const opt = document.createElement('option');
+        opt.value = type.text;
+        opt.textContent = type.text;
+        select.appendChild(opt);
       });
+      
+      select.addEventListener('change', function() {
+        fnComboIsuFilter('2');
+      });
+
+      const sustSelect = document.getElementById('pSustCd2');
+      if (sustSelect) {
+        sustSelect.innerHTML = '';
+        const depts = [...new Set(allSubjects.map(s => s.dept).filter(d => d && String(d).trim()))].sort();
+        depts.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = d;
+          sustSelect.appendChild(opt);
+        });
+        
+        if (depts.length > 0) {
+          sustSelect.value = depts[0];
+          sustSelect.addEventListener('change', function() {
+            fnComboMajorFilter('2');
+          });
+          fnComboMajorFilter('2');
+        }
+      }
+
+      const majorSelect = document.getElementById('pMajorCd2');
+      if (majorSelect) {
+        majorSelect.innerHTML = '<option value="">전체학과</option>';
+      }
+    }
+
+    function fnChkVal(type) {
+      if (type === '3') {
+        const multiValue = document.getElementById('pMultiCd3').value;
+        const compositeRow = document.getElementById('idThComposite3');
+        const microRow = document.getElementById('idThMicro3');
+
+        if (multiValue === 'CMF005008') {
+          compositeRow.style.display = '';
+          document.getElementById('idTdComposite3').style.display = '';
+        } else {
+          compositeRow.style.display = 'none';
+          document.getElementById('idTdComposite3').style.display = 'none';
+        }
+
+        if (multiValue === 'CMF005009') {
+          microRow.style.display = '';
+          document.getElementById('idTdMicro3').style.display = '';
+        } else {
+          microRow.style.display = 'none';
+          document.getElementById('idTdMicro3').style.display = 'none';
+        }
+      }
+    }
+
+    function initMultipleTypes() {
+      const select = document.getElementById('pMultiCd3');
+      if (!select) return;
+      
+      select.innerHTML = '';
+      const types = [
+        { value: 'CMF005001', text: '부전공' },
+        { value: 'CMF005002', text: '복수전공' },
+        { value: 'CMF005008', text: '융복합전공' },
+        { value: 'CMF005009', text: '마이크로전공' }
+      ];
+      
+      types.forEach(type => {
+        const opt = document.createElement('option');
+        opt.value = type.value;
+        opt.textContent = type.text;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener('change', function() {
+        fnComboMajorFilter('3');
+        fnChkVal('3');
+      });
+
+      const sustSelect = document.getElementById('pSustCd3');
+      if (sustSelect) {
+        sustSelect.innerHTML = '';
+        const depts = [...new Set(allSubjects.map(s => s.dept).filter(d => d && String(d).trim()))].sort();
+        depts.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = d;
+          sustSelect.appendChild(opt);
+        });
+        
+        if (depts.length > 0) {
+          sustSelect.value = depts[0];
+          sustSelect.addEventListener('change', function() {
+            fnComboMajorFilter('3');
+          });
+          fnComboMajorFilter('3');
+        }
+      }
+
+      const majorSelect = document.getElementById('pMajorCd3');
+      if (majorSelect) {
+        majorSelect.innerHTML = '<option value="">전체학과</option>';
+      }
+    }
+
+    function filterCourses(searchType = null) {
+      if (searchType === null) searchType = currentSearchType;
+
+      let filtered = [];
+
+      if (searchType === '1') {
+        const dept = document.getElementById('pSustCd1')?.value || '';
+        const major = document.getElementById('pMajorCd1')?.value || '';
+        const search = (document.getElementById('pLectNm1')?.value || '').toLowerCase();
+
+        if (dept) {
+          filtered = allSubjects.filter(s => {
+            if (s.dept !== dept) return false;
+            if (major && s.major !== major) return false;
+            if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+            return true;
+          });
+        }
+      } else if (searchType === '2') {
+        const type = document.getElementById('pIsuCd2')?.value || '';
+        const sustValue = document.getElementById('pSustCd2')?.value || '';
+        const majorValue = document.getElementById('pMajorCd2')?.value || '';
+        const search = (document.getElementById('pLectNm2')?.value || '').toLowerCase();
+
+        filtered = allSubjects.filter(s => {
+          if (type && s.type !== type) return false;
+          if (sustValue && s.dept !== sustValue) return false;
+          if (majorValue && s.major !== majorValue) return false;
+          if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+          return true;
+        });
+      } else if (searchType === '3') {
+        const sustValue = document.getElementById('pSustCd3')?.value || '';
+        const majorValue = document.getElementById('pMajorCd3')?.value || '';
+        const search = (document.getElementById('pLectNm3')?.value || '').toLowerCase();
+
+        filtered = allSubjects.filter(s => {
+          if (sustValue && s.dept !== sustValue) return false;
+          if (majorValue && s.major !== majorValue) return false;
+          if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+          return true;
+        });
+      } else if (searchType === '0') {
+        const search = (document.getElementById('pLectNm0')?.value || '').toLowerCase();
+        filtered = allSubjects.filter(s => {
+          if (search && !s.name.toLowerCase().includes(search) && !s.code.includes(search)) return false;
+          return true;
+        });
+      }
 
       document.getElementById('total-count').textContent = filtered.length;
       const tbody = document.getElementById('course-table');
@@ -424,9 +710,6 @@
 
       filtered.forEach((s, i) => {
         const cap = s.cap !== undefined ? s.cap : 30;
-        const isRegistered = JSON.parse(localStorage.getItem('registerList') || '[]').some(r => r.code === s.code);
-        const isBasket = JSON.parse(localStorage.getItem('basketList') || '[]').some(b => b.code === s.code);
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${s.dept}</td>
@@ -438,16 +721,18 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${cap}</td>
-          <td>
-            ${isRegistered ? '<span style="color:#d32f2f;">신청됨</span>' : (isBasket ? '<button class="btn-add" onclick="removeFromBasket(\''+s.code+'\')">취소</button>' : '<button class="btn-add" onclick="addToBasket(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\')">추가</button>')}
-          </td>
+          <td><button class="btn-add" onclick="addToBasket('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${cap}')">담기</button></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // 예비수강 추가
-    function addToBasket(code, name, dept, major, year, type, credit, cap) {
+    window.addToBasket = function(code, name, dept, major, year, type, credit, cap) {
+      if (!dept || !dept.trim() || !major || !major.trim()) {
+        alert('유효한 과목이 아닙니다.');
+        return;
+      }
+
       let list = JSON.parse(localStorage.getItem('basketList') || '[]');
       if (list.find(s => s.code === code)) {
         alert('이미 예비수강에 있습니다.');
@@ -455,22 +740,27 @@
       }
       list.push({ code, name, dept, major, year, type, credit, cap });
       localStorage.setItem('basketList', JSON.stringify(list));
+      filterCourses(currentSearchType);
       alert('예비수강에 추가되었습니다.');
-      filterCourses();
-      renderBasketList();
-    }
+    };
 
-    // 예비수강 삭제
-    function removeFromBasket(code) {
+    window.removeFromBasket = function(code) {
       let list = JSON.parse(localStorage.getItem('basketList') || '[]');
       list = list.filter(s => s.code !== code);
       localStorage.setItem('basketList', JSON.stringify(list));
-      filterCourses();
-      renderBasketList();
-    }
+      filterCourses(currentSearchType);
+      renderBasketListInTab2();
+    };
 
-    // 예비수강 목록 렌더링
-    function renderBasketList() {
+    window.removeFromRegister = function(code) {
+      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      list = list.filter(s => s.code !== code);
+      localStorage.setItem('registerList', JSON.stringify(list));
+      filterCourses(currentSearchType);
+      renderRegisterListInTab3();
+    };
+
+    function renderBasketListInTab2() {
       let list = JSON.parse(localStorage.getItem('basketList') || '[]');
       const tbody = document.getElementById('basket-table');
       tbody.innerHTML = '';
@@ -505,8 +795,7 @@
       document.getElementById('basket-count').textContent = list.length;
     }
 
-    // 수강신청 목록 렌더링
-    function renderRegisterList() {
+    function renderRegisterListInTab3() {
       let list = JSON.parse(localStorage.getItem('registerList') || '[]');
       const tbody = document.getElementById('register-table');
       tbody.innerHTML = '';
@@ -541,16 +830,35 @@
       document.getElementById('register-count').textContent = list.length;
     }
 
-    // 수강신청 삭제
-    function removeFromRegister(code) {
-      let list = JSON.parse(localStorage.getItem('registerList') || '[]');
-      list = list.filter(s => s.code !== code);
-      localStorage.setItem('registerList', JSON.stringify(list));
-      renderRegisterList();
-      filterCourses();
-    }
+    function initializeApp() {
+      console.log('initializeApp called');
+      
+      initRadioFormSwitch();
+      console.log('[initializeApp] initDepts1 시작');
+      initDepts1();
+      console.log('[initializeApp] initDepts1 완료');
+      
+      console.log('[initializeApp] initIsuTypes 시작');
+      initIsuTypes();
+      console.log('[initializeApp] initIsuTypes 완료');
+      
+      console.log('[initializeApp] initMultipleTypes 시작');
+      initMultipleTypes();
+      console.log('[initializeApp] initMultipleTypes 완료');
 
-    initDepts();
+      renderBasketListInTab2();
+      renderRegisterListInTab3();
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded event fired');
+        initializeApp();
+      });
+    } else {
+      console.log('DOM already loaded, initializing now');
+      initializeApp();
+    }
   </script>
 </body>
 </html>
