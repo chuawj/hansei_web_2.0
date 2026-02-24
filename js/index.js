@@ -108,6 +108,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		localStorage.setItem('userGrade', grade);
 
 		updateNavigation();
+		
+		// 수강신청 페이지가 열려있으면 새로고침 (Tab-1 비활성화 반영)
+		const currentPage = document.querySelector('.nav-menu li.is-active')?.getAttribute('data-page');
+		if (currentPage === 'register') {
+			const iframe = document.getElementById('main-frame');
+			iframe.src = iframe.src; // iframe 새로고침
+		}
 
 		alert('설정이 저장되었습니다.');
 		document.getElementById('settings-modal').style.display = 'none';

@@ -226,7 +226,7 @@
         </div>
       </div>
 
-      <div style="height: 96px; overflow-y: auto;">
+      <div style="height: 96px; overflow-y: auto; margin-bottom: 30px;">
         <table class="result-table">
           <thead>
             <tr>
@@ -262,7 +262,7 @@
         </div>
       </div>
 
-      <div style="max-height: 350px; overflow-y: auto;">
+      <div style="max-height: 600px; overflow-y: auto;">
         <table class="result-table">
           <thead>
             <tr>
@@ -306,11 +306,11 @@
         </div>
       </div>
 
-      <div style="max-height: 350px; overflow-y: auto;">
+      <div style="max-height: 600px; overflow-y: auto;">
         <table class="result-table">
           <thead>
             <tr>
-              <th style="width: 70px;">삭제</th>
+              <th style="width: 70px;">신청</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -323,7 +323,7 @@
             </tr>
           </thead>
           <tbody id="register-table-basket">
-            <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
+            <tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>
           </tbody>
         </table>
       </div>
@@ -350,7 +350,7 @@
         </div>
       </div>
 
-      <div style="max-height: 350px; overflow-y: auto;">
+      <div style="max-height: 600px; overflow-y: auto;">
         <table class="result-table">
           <thead>
             <tr>
@@ -791,13 +791,11 @@
         return;
       }
       
-      QueueModal.showApply(function() {
-        list.push({ code, name, dept, major, year, type, credit, cap });
-        localStorage.setItem('basketList', JSON.stringify(list));
-        filterCourses(currentSearchType);
-        renderBasketListInTab2();
-        alert('예비수강에 추가되었습니다.');
-      });
+      list.push({ code, name, dept, major, year, type, credit, cap });
+      localStorage.setItem('basketList', JSON.stringify(list));
+      filterCourses(currentSearchType);
+      renderBasketListInTab2();
+      alert('예비수강에 추가되었습니다.');
     };
 
     window.removeFromBasket = function(code) {
@@ -813,6 +811,25 @@
       list = list.filter(s => s.code !== code);
       localStorage.setItem('registerList', JSON.stringify(list));
       renderRegisterListInTab3();
+    };
+
+    window.applyFromBasket = function(code, name, dept, major, year, type, credit, cap) {
+      let registerList = JSON.parse(localStorage.getItem('registerList') || '[]');
+      if (registerList.find(s => s.code === code)) {
+        alert('이미 신청한 과목입니다.');
+        return;
+      }
+      
+      registerList.push({ code, name, dept, major, year, type, credit, cap });
+      localStorage.setItem('registerList', JSON.stringify(registerList));
+      
+      let basketList = JSON.parse(localStorage.getItem('basketList') || '[]');
+      basketList = basketList.filter(s => s.code !== code);
+      localStorage.setItem('basketList', JSON.stringify(basketList));
+      
+      renderBasketListInTab2();
+      renderRegisterListInTab3();
+      alert('수강신청 되었습니다.');
     };
 
     function renderBasketListInTab2() {
@@ -856,11 +873,17 @@
         }
 
         let totalCredit = 0;
+        const registerList = JSON.parse(localStorage.getItem('registerList') || '[]');
         list.forEach((s, i) => {
           totalCredit += parseInt(s.credit, 10);
           const tr = document.createElement('tr');
+          const isApplied = registerList.find(r => r.code === s.code);
+          const buttonHtml = isApplied 
+            ? `<button class="btn-add" disabled="disabled" style="opacity: 0.5; cursor: not-allowed;">신청됨</button>`
+            : `<button class="btn-add" onclick="applyFromBasket('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${s.cap}')">신청</button>`;
+          
           tr.innerHTML = `
-            <td><button class="btn-del" onclick="removeFromBasket('${s.code}')">삭제</button></td>
+            <td>${buttonHtml}</td>
             <td>${s.dept}</td>
             <td>${s.major}</td>
             <td>${s.year}</td>
@@ -898,7 +921,7 @@
         totalCredit += parseInt(s.credit, 10);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
+          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">취소</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -937,16 +960,14 @@
         return;
       }
 
-      QueueModal.showApply(function() {
-        basketList.push(subject);
-        localStorage.setItem('basketList', JSON.stringify(basketList));
-        alert('예비수강에 추가되었습니다.');
-        document.getElementById('quick-code').value = '';
-        document.getElementById('quick-class').value = '';
-        document.getElementById('quick-code').focus();
-        filterCourses(currentSearchType);
-        renderBasketListInTab2();
-      });
+      basketList.push(subject);
+      localStorage.setItem('basketList', JSON.stringify(basketList));
+      alert('예비수강에 추가되었습니다.');
+      document.getElementById('quick-code').value = '';
+      document.getElementById('quick-class').value = '';
+      document.getElementById('quick-code').focus();
+      filterCourses(currentSearchType);
+      renderBasketListInTab2();
     }
 
     window.quickAddToBasket = quickAddToBasket;
