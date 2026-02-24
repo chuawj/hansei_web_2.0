@@ -230,6 +230,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">신청</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -239,7 +240,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">담기</th>
             </tr>
           </thead>
           <tbody id="course-table">
@@ -266,6 +266,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -275,7 +276,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
           <tbody id="basket-table">
@@ -310,6 +310,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -319,7 +320,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
           <tbody id="register-table-basket">
@@ -354,6 +354,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -363,11 +364,9 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
-          <tbody id="register-table-tab3">
-            <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
+          <tbody id="register-table-tab3">\n            <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
           </tbody>
         </table>
       </div>
@@ -765,6 +764,7 @@
         const cap = s.cap !== undefined ? s.cap : 30;
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td><button class="btn-add" onclick="addToBasket('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${cap}')">신청</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -774,7 +774,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${cap}</td>
-          <td><button class="btn-add" onclick="addToBasket('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${cap}')">담기</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -818,39 +817,66 @@
 
     function renderBasketListInTab2() {
       let list = JSON.parse(localStorage.getItem('basketList') || '[]');
-      const tbody = document.getElementById('register-table-basket');
-      if (!tbody) return;
       
-      tbody.innerHTML = '';
-
-      if (list.length === 0) {
-        document.getElementById('register-credit-basket').textContent = '0';
-        document.getElementById('register-count-basket').textContent = '0';
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>';
-        return;
+      // Tab 1 내부의 basket-table 업데이트
+      const basketTable = document.getElementById('basket-table');
+      if (basketTable) {
+        basketTable.innerHTML = '';
+        if (list.length === 0) {
+          basketTable.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>';
+        } else {
+          list.forEach((s, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><button class="btn-del" onclick="removeFromBasket('${s.code}')">삭제</button></td>
+              <td>${s.dept}</td>
+              <td>${s.major}</td>
+              <td>${s.year}</td>
+              <td>${s.name}</td>
+              <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+              <td>${s.type}</td>
+              <td>${s.credit}</td>
+              <td>0</td>
+              <td>${s.cap}</td>
+            `;
+            basketTable.appendChild(tr);
+          });
+        }
       }
+      
+      // Tab 2의 register-table-basket 업데이트
+      const tbody = document.getElementById('register-table-basket');
+      if (tbody) {
+        tbody.innerHTML = '';
+        if (list.length === 0) {
+          document.getElementById('register-credit-basket').textContent = '0';
+          document.getElementById('register-count-basket').textContent = '0';
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999;">예비수강이 없습니다.</td></tr>';
+          return;
+        }
 
-      let totalCredit = 0;
-      list.forEach((s, i) => {
-        totalCredit += parseInt(s.credit, 10);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${s.dept}</td>
-          <td>${s.major}</td>
-          <td>${s.year}</td>
-          <td>${s.name}</td>
-          <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
-          <td>${s.type}</td>
-          <td>${s.credit}</td>
-          <td>0</td>
-          <td>${s.cap}</td>
-          <td><button class="btn-del" onclick="removeFromBasket('${s.code}')">삭제</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
+        let totalCredit = 0;
+        list.forEach((s, i) => {
+          totalCredit += parseInt(s.credit, 10);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><button class="btn-del" onclick="removeFromBasket('${s.code}')">삭제</button></td>
+            <td>${s.dept}</td>
+            <td>${s.major}</td>
+            <td>${s.year}</td>
+            <td>${s.name}</td>
+            <td><a href="javascript:void(0);" style="color:#1976d2; text-decoration:none;">${s.code}</a></td>
+            <td>${s.type}</td>
+            <td>${s.credit}</td>
+            <td>0</td>
+            <td>${s.cap}</td>
+          `;
+          tbody.appendChild(tr);
+        });
 
-      document.getElementById('register-credit-basket').textContent = totalCredit;
-      document.getElementById('register-count-basket').textContent = list.length;
+        document.getElementById('register-credit-basket').textContent = totalCredit;
+        document.getElementById('register-count-basket').textContent = list.length;
+      }
     }
 
     function renderRegisterListInTab3() {
@@ -872,6 +898,7 @@
         totalCredit += parseInt(s.credit, 10);
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -881,7 +908,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${s.cap}</td>
-          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
         `;
         tbody.appendChild(tr);
       });

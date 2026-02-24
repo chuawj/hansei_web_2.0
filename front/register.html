@@ -230,6 +230,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">신청</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -239,7 +240,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">신청</th>
             </tr>
           </thead>
           <tbody id="course-table">
@@ -267,6 +267,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -276,7 +277,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
           <tbody id="register-table">
@@ -311,6 +311,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -320,7 +321,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
           <tbody id="basket-table">
@@ -355,6 +355,7 @@
         <table class="result-table">
           <thead>
             <tr>
+              <th style="width: 70px;">삭제</th>
               <th style="width: 80px;">학부</th>
               <th style="width: 100px;">학과</th>
               <th style="width: 50px;">학년</th>
@@ -364,7 +365,6 @@
               <th style="width: 50px;">학점</th>
               <th style="width: 50px;">신청</th>
               <th style="width: 50px;">정원</th>
-              <th style="width: 70px;">삭제</th>
             </tr>
           </thead>
           <tbody id="register-table-tab3">
@@ -963,6 +963,9 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td>
+            ${isAdded ? '<span style="color:#d32f2f;">신청</span>' : '<button class="btn-add" onclick="addToRegister(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\')">신청</button>'}
+          </td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -972,9 +975,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${cap}</td>
-          <td>
-            ${isAdded ? '<span style="color:#d32f2f;">신청</span>' : '<button class="btn-add" onclick="addToRegister(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\')">신청</button>'}
-          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -1027,6 +1027,7 @@
         totalCredit += parseInt(s.credit, 10);
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -1036,7 +1037,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${s.cap}</td>
-          <td><button class="btn-del" onclick="removeFromRegister('${s.code}')">삭제</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -1063,6 +1063,7 @@
         totalCredit += parseInt(s.credit, 10);
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td><button class="btn-del" onclick="removeBasketFromTab2('${s.code}')">삭제</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -1072,7 +1073,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${s.cap}</td>
-          <td><button class="btn-del" onclick="removeBasketFromTab2('${s.code}')">삭제</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -1107,6 +1107,7 @@
         totalCredit += parseInt(s.credit, 10);
         const tr = document.createElement('tr');
         tr.innerHTML = `
+          <td><button class="btn-del" onclick="removeRegisterFromTab3('${s.code}')">삭제</button></td>
           <td>${s.dept}</td>
           <td>${s.major}</td>
           <td>${s.year}</td>
@@ -1116,7 +1117,6 @@
           <td>${s.credit}</td>
           <td>0</td>
           <td>${s.cap}</td>
-          <td><button class="btn-del" onclick="removeRegisterFromTab3('${s.code}')">삭제</button></td>
         `;
         tbody.appendChild(tr);
       });
