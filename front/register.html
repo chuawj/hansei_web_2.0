@@ -160,7 +160,7 @@
         </div>
 
         <!-- 2: 이수구분 -->
-        <div id="idIsu" style="display: none;">
+        <div id="idIsu" style="display: none;" class="search-section">
           <table>
             <colgroup>
               <col width="80px">
@@ -426,13 +426,13 @@
           break;
         case '2':
           document.getElementById(`idIsu${prefix}`).style.display = 'block';
-          console.log('[switchSearchForm] Type 2 표시 - fnComboMajorFilter(2, tab) 호출');
-          fnComboMajorFilter('2', tab);
+          console.log('[switchSearchForm] Type 2 표시 - fnComboMajorFilter(2) 호출');
+          fnComboMajorFilter('2');
           break;
         case '3':
           document.getElementById(`idMultiple${prefix}`).style.display = 'block';
-          console.log('[switchSearchForm] Type 3 표시 - fnComboMajorFilter(3, tab) 호출');
-          fnComboMajorFilter('3', tab);
+          console.log('[switchSearchForm] Type 3 표시 - fnComboMajorFilter(3) 호출');
+          fnComboMajorFilter('3');
           break;
         case '0':
           document.getElementById(`idSearch${prefix}`).style.display = 'block';
@@ -723,23 +723,18 @@
           { text: '연계필수' },
           { text: '연계선택' }
         ];
-        
         types.forEach(type => {
           const opt = document.createElement('option');
           opt.value = type.text;
           opt.textContent = type.text;
           select.appendChild(opt);
         });
-        
-        select.addEventListener('change', function() {
-          fnComboIsuFilter('2');
-        });
       }
-
+      
       // Tab-1
-      const select_tab1 = document.getElementById('pIsuCd2-tab1');
-      if (select_tab1) {
-        select_tab1.innerHTML = '';
+      const selectTab1 = document.getElementById('pIsuCd2-tab1');
+      if (selectTab1) {
+        selectTab1.innerHTML = '';
         const types = [
           { text: '전공필수' },
           { text: '전공선택' },
@@ -750,16 +745,11 @@
           { text: '연계필수' },
           { text: '연계선택' }
         ];
-        
         types.forEach(type => {
           const opt = document.createElement('option');
           opt.value = type.text;
           opt.textContent = type.text;
-          select_tab1.appendChild(opt);
-        });
-        
-        select_tab1.addEventListener('change', function() {
-          fnComboIsuFilter('2');
+          selectTab1.appendChild(opt);
         });
       }
 
@@ -1251,27 +1241,28 @@
       }
 
       filtered.forEach((s, i) => {
-        const cap = s.cap !== undefined ? s.cap : 30;
+        const defaultCap = s.cap !== undefined ? parseInt(s.cap) : 30;
+        const capacityMap = JSON.parse(localStorage.getItem('courseCapacity') || '{}');
+        const cap = typeof capacityMap[s.code] !== 'undefined' ? parseInt(capacityMap[s.code]) : defaultCap;
         const isAdded = JSON.parse(localStorage.getItem('registerList') || '[]').some(r => r.code === s.code);
 
         const tr = document.createElement('tr');
         let cellHtml = '';
         
+        // 정원 체크 로직
+        const disabledBtn = `<button class="btn-add" disabled="disabled" style="opacity:0.5; cursor:not-allowed;">마감</button>`;
+        const appliedSpan = `<span style="color:#d32f2f;">신청</span>`;
+        const canApply = cap > 0 && !isAdded;
+        
         if (tab === 'tab1') {
-          // Tab-1: 신청 버튼 만 표시
-          cellHtml = `
-            <td>
-              ${isAdded ? '<span style="color:#d32f2f;">신청</span>' : '<button class="btn-add" onclick="addToRegister(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\', \''+tab+'\')">신청</button>'}
-            </td>
-          `;
+          // Tab-1: 이미 신청한 과목만 표시
+          const btnHtml = isAdded ? appliedSpan : (canApply ? `<button class="btn-add" onclick="addToRegister('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${defaultCap}', '${tab}')">신청</button>` : disabledBtn);
+          cellHtml = `<td>${btnHtml}</td>`;
         } else {
-          // Tab-2: 신청 버튼만 표시
-          cellHtml = `
-            <td>
-              ${isAdded ? '<span style="color:#d32f2f;">신청</span>' : '<button class="btn-add" onclick="addToRegister(\''+s.code+'\', \''+s.name+'\', \''+s.dept+'\', \''+s.major+'\', \''+s.year+'\', \''+s.type+'\', \''+s.credit+'\', \''+cap+'\', \''+tab+'\')">신청</button>'}
-            </td>
-          `;
-          }
+          // Tab-2: 신청 상태에 따른 버튼 표시
+          const btnHtml = isAdded ? appliedSpan : (canApply ? `<button class="btn-add" onclick="addToRegister('${s.code}', '${s.name}', '${s.dept}', '${s.major}', '${s.year}', '${s.type}', '${s.credit}', '${defaultCap}', '${tab}')">신청</button>` : disabledBtn);
+          cellHtml = `<td>${btnHtml}</td>`;
+        }
         
         tr.innerHTML = cellHtml + `
           <td>${s.dept}</td>
@@ -1288,8 +1279,22 @@
       });
     }
 
-    // 수강신청 추가
+    // 수강신청 추가 (정원 감소 포함)
     function addToRegister(code, name, dept, major, year, type, credit, cap, tab = 'tab2') {
+      // 타이머 시간 체크 - 타이머가 설정되지 않으면 신청 불가
+      if (!window.timerOpenTime) {
+        QueueModal.showTimeNotYet();
+        return;
+      }
+
+      const now = new Date();
+      if (now < window.timerOpenTime) {
+        // 아직 시간이 되지 않았으면 모달 표시 후 종료
+        QueueModal.showTimeNotYet();
+        return;
+      }
+
+      // 시간이 되었으면 정상적으로 신청 진행
       QueueModal.showApply(function() {
         if (!dept || !dept.trim() || !major || !major.trim()) {
           alert('유효한 과목이 아닙니다.');
@@ -1301,10 +1306,27 @@
           alert('이미 신청한 과목입니다.');
           return;
         }
-        list.push({ code, name, dept, major, year, type, credit, cap });
+
+        // 정원 정보 가져오기 (localStorage에 저장된 정원 상태)
+        let capacityMap = JSON.parse(localStorage.getItem('courseCapacity') || '{}');
+        const currentCap = parseInt(capacityMap[code]) || parseInt(cap);
+
+        // 정원이 0이면 신청 불가
+        if (currentCap <= 0) {
+          alert('정원이 마감되었습니다.');
+          return;
+        }
+
+        // 정원 감소
+        capacityMap[code] = currentCap - 1;
+        localStorage.setItem('courseCapacity', JSON.stringify(capacityMap));
+
+        list.push({ code, name, dept, major, year, type, credit, cap: currentCap - 1 });
         localStorage.setItem('registerList', JSON.stringify(list));
         filterCourses(currentSearchType, tab);
         renderRegisterList(tab);
+        
+        alert(`신청되었습니다. (남은 정원: ${currentCap - 1}명)`);
       });
     }
 
@@ -1320,9 +1342,18 @@
       filterCourses(currentSearchType, 'tab1');
     }
 
-    // 수강신청 삭제
+    // 수강신청 삭제 (정원 복구)
     function removeFromRegister(code, tab = 'tab2') {
       let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+      const removed = list.find(s => s.code === code);
+      
+      if (removed) {
+        // 정원 복구
+        let capacityMap = JSON.parse(localStorage.getItem('courseCapacity') || '{}');
+        capacityMap[code] = (parseInt(capacityMap[code]) || 0) + 1;
+        localStorage.setItem('courseCapacity', JSON.stringify(capacityMap));
+      }
+
       list = list.filter(s => s.code !== code);
       localStorage.setItem('registerList', JSON.stringify(list));
       filterCourses(currentSearchType, tab);
@@ -1485,6 +1516,164 @@
     } else {
       console.log('DOM already loaded, initializing now');
       initializeApp();
+    }
+
+    // ==================== 자동 정원 감소 시뮬레이션 (2~3초, 3~5개) ====================
+    let advancedTrafficActive = false;
+    let advancedTrafficInterval = null;
+
+    function startAdvancedTrafficSimulation() {
+      if (advancedTrafficActive) return;
+      advancedTrafficActive = true;
+      
+      // 초기 1회 실행
+      performAdvancedTraffic();
+      
+      // 2~3초마다 반복 (2000~3000ms 범위의 랜덤)
+      const scheduleNext = function() {
+        const delay = Math.floor(Math.random() * 1000) + 2000; // 2000~3000ms
+        advancedTrafficInterval = setTimeout(function() {
+          if (advancedTrafficActive) {
+            performAdvancedTraffic();
+            scheduleNext(); // 다음 실행 예약
+          }
+        }, delay);
+      };
+      
+      scheduleNext();
+    }
+
+    function stopAdvancedTrafficSimulation() {
+      advancedTrafficActive = false;
+      if (advancedTrafficInterval !== null) {
+        clearTimeout(advancedTrafficInterval);
+        advancedTrafficInterval = null;
+      }
+    }
+
+    function performAdvancedTraffic() {
+      if (!advancedTrafficActive) return;
+
+      try {
+        // 모든 과목 중에서 무작위로 20개 선택
+        const coursesToUpdate = [];
+        const availableCourses = [...allSubjects];
+        
+        for (let i = 0; i < Math.min(20, availableCourses.length); i++) {
+          const randomIndex = Math.floor(Math.random() * availableCourses.length);
+          coursesToUpdate.push(availableCourses[randomIndex]);
+          availableCourses.splice(randomIndex, 1);
+        }
+
+        // courseCapacity 가져오기
+        let capacityMap = JSON.parse(localStorage.getItem('courseCapacity') || '{}');
+
+        // 선택된 과목들의 정원 감소 (3-5개)
+        coursesToUpdate.forEach(course => {
+          const defaultCap = parseInt(course.cap) || 30;
+          const currentCap = typeof capacityMap[course.code] !== 'undefined' ? parseInt(capacityMap[course.code]) : defaultCap;
+          const decreaseAmount = Math.floor(Math.random() * 3) + 3; // 3~5 사이의 랜덤 값
+          const newCap = Math.max(0, currentCap - decreaseAmount);
+          capacityMap[course.code] = newCap;
+        });
+
+        // localStorage에 저장
+        localStorage.setItem('courseCapacity', JSON.stringify(capacityMap));
+
+        // UI 업데이트 (현재 표시된 탭만 갱신)
+        const activeTab = document.querySelector('.sw-tabs li.is-active')?.dataset.tab || 'tab-2';
+        filterCourses('1', activeTab);
+        
+        console.log('[AdvancedTraffic] Updated', coursesToUpdate.length, 'courses');
+      } catch (e) {
+        console.error('[AdvancedTraffic] Error:', e);
+      }
+    }
+
+    // 초기화: localStorage에서 설정 읽기
+    const autoTraffic = localStorage.getItem('autoTrafficSimulation') === 'true';
+    if (autoTraffic) {
+      advancedTrafficActive = true;
+      startAdvancedTrafficSimulation();
+    }
+
+    // ==================== 타이머 기반 자동 신청 ====================
+    let timerBasedInterval = null;
+    let timerRegistered = false;
+
+    // index.html에서 타이머 설정 후 호출됨
+    window.initTimerBasedRegistration = function(openTime) {
+      console.log('[initTimerBasedRegistration] openTime:', openTime);
+      window.timerOpenTime = openTime;
+      timerRegistered = true;
+      
+      // 기존 interval 정리
+      if (timerBasedInterval) clearInterval(timerBasedInterval);
+      
+      // 1초마다 확인
+      timerBasedInterval = setInterval(function() {
+        const now = new Date();
+        if (now >= window.timerOpenTime) {
+          console.log('[TimerBased] 신청 시간 도래! 자동 신청 시작');
+          registerOnTimer();
+          clearInterval(timerBasedInterval);
+          timerBasedInterval = null;
+        }
+      }, 1000);
+    };
+
+    // 타이머 시간 도래 시 basketList 모든 과목 신청 버튼 자동 클릭
+    function registerOnTimer() {
+      const basketList = JSON.parse(localStorage.getItem('basketList') || '[]');
+      const registerList = JSON.parse(localStorage.getItem('registerList') || '[]');
+
+      console.log('[registerOnTimer] basketList:', basketList.length, '개 과목 자동 신청 시작');
+
+      basketList.forEach((course, index) => {
+        // 이미 신청된 과목은 스킵
+        if (registerList.find(s => s.code === course.code)) {
+          console.log('[registerOnTimer] 이미 신청됨:', course.name);
+          return;
+        }
+
+        // 정원 체크
+        let capacityMap = JSON.parse(localStorage.getItem('courseCapacity') || '{}');
+        const defaultCap = parseInt(course.cap) || 30;
+        const currentCap = typeof capacityMap[course.code] !== 'undefined' ? parseInt(capacityMap[course.code]) : defaultCap;
+
+        if (currentCap <= 0) {
+          console.log('[registerOnTimer] 정원이 마감됨:', course.name);
+          return;
+        }
+
+        // addToRegister 호출 - 신청 버튼 클릭과 동일하게 동작
+        try {
+          // 신청 처리 (QueueModal 없이 직접 처리)
+          let list = JSON.parse(localStorage.getItem('registerList') || '[]');
+          capacityMap[course.code] = currentCap - 1;
+          localStorage.setItem('courseCapacity', JSON.stringify(capacityMap));
+          
+          list.push({ 
+            code: course.code, 
+            name: course.name, 
+            dept: course.dept, 
+            major: course.major, 
+            year: course.year, 
+            type: course.type, 
+            credit: course.credit, 
+            cap: currentCap - 1 
+          });
+          
+          localStorage.setItem('registerList', JSON.stringify(list));
+          console.log('[registerOnTimer] ✓ 신청 완료:', course.name, '(남은 정원:', (currentCap - 1), '명)');
+        } catch (e) {
+          console.error('[registerOnTimer] 신청 실패:', course.name, e);
+        }
+      });
+
+      // UI 업데이트
+      filterCourses('1', 'tab1');
+      renderRegisterList();
     }
   </script>
 </body>

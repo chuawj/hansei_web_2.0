@@ -57,6 +57,30 @@ const QueueModal = {
       queueModal.style.display = 'none';
       callback();
     }, waitSec*1000);
+  },
+  showTimeNotYet(callback) {
+    console.log('[QueueModal] showTimeNotYet called');
+    const queueModal = document.getElementById('queue-modal');
+    if (!queueModal) { console.warn('[QueueModal] queue-modal element not found'); callback?.(); return; }
+    const queueTitle = queueModal.querySelector('.title') || document.getElementById('queue-title');
+    const queueMessage = queueModal.querySelector('.message') || document.getElementById('queue-message');
+    
+    if (queueTitle) queueTitle.textContent = `아직 신청 시간이 아닙니다`;
+    
+    if (queueMessage && window.timerOpenTime) {
+      const diffSec = Math.floor((window.timerOpenTime - new Date()) / 1000);
+      queueMessage.textContent = `남은 시간: ${diffSec}초`;
+    } else if (queueMessage) {
+      queueMessage.textContent = `타이머를 설정하면 시간이 되었을 때 자동으로 신청됩니다.`;
+    }
+    
+    queueModal.style.display = 'flex';
+    
+    // 3초 후 자동 닫기
+    setTimeout(()=>{
+      queueModal.style.display = 'none';
+      callback?.();
+    }, 3000);
   }
 };
 

@@ -28,11 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
 				return;
 			}
 
-			if (pageType === 'register' && !window.globalOpenTime) {
-				document.getElementById('timer-modal').style.display = 'flex';
-				return;
-			}
-
 			document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('is-active'));
 			this.classList.add('is-active');
 			document.getElementById('main-frame').src = tabMap[pageType];
@@ -68,8 +63,21 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		window.globalOpenTime = newOpenTime;
+		window.timerOpenTime = newOpenTime; // register.html에서 사용
+		window.timerBasedRegistrationEnabled = true; // 타이머 기반 신청 활성화
+		
 		if (timerInterval) clearInterval(timerInterval);
 		updateTimer();
+
+		// register iframe으로 타이머 기반 신청 시간 전달
+		try {
+			const iframe = document.getElementById('main-frame');
+			if (iframe && iframe.contentWindow) {
+				iframe.contentWindow.initTimerBasedRegistration?.(newOpenTime);
+			}
+		} catch (e) {
+			console.log('iframe communication failed');
+		}
 	};
 
 	// 초기화
@@ -77,6 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		localStorage.removeItem('registerList');
 		localStorage.removeItem('basketList');
 		window.globalOpenTime = null;
+		window.timerOpenTime = null;
+		window.timerBasedRegistrationEnabled = false;
 		if (timerInterval) clearInterval(timerInterval);
 
 		const timerDisplay = document.getElementById('timer-display');
@@ -190,4 +200,42 @@ document.addEventListener('DOMContentLoaded', function() {
 	setInterval(updateServerTime, 1000);
 	setInterval(updateTotalCredit, 500);
 	updateTotalCredit();
+
+	// 저장된 설정 로드
+	function loadSettings() {
+		const trafficEnabled = localStorage.getItem('autoTrafficSimulation') === 'true';
+		const trafficToggle = document.getElementById('traffic-toggle');
+		if (trafficToggle) {
+			trafficToggle.checked = trafficEnabled;
+		}
+	}
+
+	// 설정 저장
+	window.saveSettings = function() {
+		document.getElementById('settings-modal').style.display = 'none';
+	};
+
+	// 자동 정원 감소 토글
+	window.toggleTrafficSimulation = function() {
+		const trafficToggle = document.getElementById('traffic-toggle');
+		const isEnabled = trafficToggle.checked;
+		localStorage.setItem('autoTrafficSimulation', isEnabled ? 'true' : 'false');
+		
+		// iframe 내의 register 페이지에 상태 동기화
+		try {
+			const iframe = document.getElementById('main-frame');
+			if (iframe && iframe.contentWindow) {
+				if (isEnabled) {
+					iframe.contentWindow.startAdvancedTrafficSimulation?.();
+				} else {
+					iframe.contentWindow.stopAdvancedTrafficSimulation?.();
+				}
+			}
+		} catch (e) {
+			console.log('iframe sync failed');
+		}
+	};
+
+	// 설정 로드
+	loadSettings();
 });
