@@ -43,16 +43,12 @@
           <input type="checkbox" id="traffic-toggle" onchange="toggleTrafficSimulation()">
           <span class="toggle-slider"></span>
         </label>
-        <div style="font-size: 11px; color: #666; margin-top: 8px;">
-          2~3초마다 20개 과목의 정원이 3~5개씩 감소합니다.
-        </div>
       </div>
       <div class="settings-item">
-        <label for="grade-select">1학년</label>
-        <select id="grade-select" class="grade-select">
-          <option value="1">1학기</option>
-          <option value="2" selected>2학기</option>
-          
+        <label for="grade-select">학기</label>
+        <select id="grade-select" class="grade-select" onchange="window.updateGradeSetting && window.updateGradeSetting()">
+          <option value="1">1학기 (예비수강 불가)</option>
+          <option value="2" selected>2학기 (예비수강 가능)</option>
         </select>
       </div>
       <div id="settings-modal-buttons">

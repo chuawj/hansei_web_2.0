@@ -1443,25 +1443,25 @@
     function initializeApp() {
       console.log('initializeApp called, allSubjects.length:', allSubjects.length);
       
-      // 1학년 1학기 체크 - Tab-1 숨김/표시
-      const userGrade = localStorage.getItem('userGrade') || '2';
+      // 1학기 체크 - Tab-1 숨김/표시
+      const currentSemester = localStorage.getItem('currentSemester') || '2';
       const tab1Menu = document.getElementById('tab-1-menu');
       const tab1Content = document.getElementById('tab-1');
       
-      if (userGrade === '1') {
-        // 1학년 1학기: Tab-1 숨김 및 Tab-2를 기본으로 활성화
+      if (currentSemester === '1') {
+        // 제한: 1학기인 경우 예비수강 탭 숨김
         tab1Menu.style.display = 'none';
         tab1Content.classList.remove('is-active');
         
-        // Tab-2를 활성화
+        // Tab-2 활성화
         const tab2Menu = document.querySelector('[data-tab="tab-2"]');
         const tab2Content = document.getElementById('tab-2');
         tab2Menu.classList.add('is-active');
         tab2Content.classList.add('is-active');
         
-        console.log('[initializeApp] Tab-1 hidden for grade 1, Tab-2 activated');
+        console.log('[initializeApp] Tab-1 hidden (semester:', currentSemester + ')');
       } else {
-        // 2학년 이상: Tab-1 표시 및 활성화
+        // 조건 만족: 예비수강 탭 표시
         tab1Menu.style.display = '';
         tab1Content.classList.add('is-active');
         
@@ -1471,7 +1471,7 @@
         tab2Menu.classList.remove('is-active');
         tab2Content.classList.remove('is-active');
         
-        console.log('[initializeApp] Tab-1 shown for grade', userGrade);
+        console.log('[initializeApp] Tab-1 shown (semester', currentSemester + ')');
       }
       
       // 라디오 버튼 이벤트 리스너 추가

@@ -9,15 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	let timerInterval = null;
 	window.globalOpenTime = null;
 
+	// 학기 선택 변경 시 즉시 반영
+	window.updateGradeSetting = function() {
+		const semVal = document.getElementById('grade-select').value;
+		localStorage.setItem('currentSemester', semVal);
+		updateNavigation();
+	};
+
 	// 네비게이션 클릭
 	document.querySelectorAll('.nav-menu li').forEach(li => {
 		li.onclick = function() {
 			const pageType = this.dataset.page;
 
-			// 1학년 예비수강 제한 체크
-			if (pageType === 'basket') {
-				const grade = localStorage.getItem('userGrade') || '2';
-				if (grade === '1') {
+// 학기 기반 예비수강 제한 체크
+		if (pageType === 'basket') {
+			const semester = localStorage.getItem('currentSemester') || '2';
+			if (semester === '1') {
+				document.getElementById('freshman-basket-modal').querySelector('.message').textContent = '1학기에는 예비수강신청 기능을 사용할수없습니다.';
 					document.getElementById('freshman-basket-modal').style.display = 'flex';
 					return;
 				}
@@ -98,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	// 네비게이션 업데이트 (학년에 따라 메뉴 활성/비활성화)
 	function updateNavigation() {
 		const grade = localStorage.getItem('userGrade') || '2';
+		const semester = localStorage.getItem('currentSemester') || '2';
 		const basketMenu = document.querySelector('[data-page="basket"]');
 
-		if (grade === '1') {
-			// 1학년이면 예비수강 메뉴 비활성화
+		// 예비수강은 1학기일 때만 제한
+		if (semester === '1') {
 			basketMenu.classList.add('is-disabled');
 		} else {
-			// 1학년이 아니면 예비수강 메뉴 활성화
 			basketMenu.classList.remove('is-disabled');
 		}
 	}
@@ -112,13 +120,22 @@ document.addEventListener('DOMContentLoaded', function() {
 	// 설정 저장
 	window.saveSettings = function() {
 		const queueEnabled = document.getElementById('queue-toggle').checked;
-		const grade = document.getElementById('grade-select').value;
-
+		// 현재 셀렉트는 학기를 선택하도록 UI가 되어 있다.
+		const sem = document.getElementById('grade-select').value; // 1 or 2
 		localStorage.setItem('queueEnabled', JSON.stringify(queueEnabled));
-		localStorage.setItem('userGrade', grade);
+		// 이전에 저장된 userGrade는 건드리지 않음
+		localStorage.setItem('currentSemester', sem);
 
 		updateNavigation();
 		
+		// iframe으로 학기 변경 메시지 전달
+		try {
+			const iframe = document.getElementById('main-frame');
+			if (iframe && iframe.contentWindow) {
+				iframe.contentWindow.postMessage({type:'semester-changed', value: sem}, '*');
+			}
+		} catch (e) {}
+
 		// 수강신청 페이지가 열려있으면 새로고침 (Tab-1 비활성화 반영)
 		const currentPage = document.querySelector('.nav-menu li.is-active')?.getAttribute('data-page');
 		if (currentPage === 'register') {
@@ -133,10 +150,30 @@ document.addEventListener('DOMContentLoaded', function() {
 	// 설정 로드
 	function loadSettings() {
 		const queueEnabled = JSON.parse(localStorage.getItem('queueEnabled') || 'false');
-		const grade = localStorage.getItem('userGrade') || '2';
-
+		const semester = localStorage.getItem('currentSemester') || '2';
+	
 		document.getElementById('queue-toggle').checked = queueEnabled;
-		document.getElementById('grade-select').value = grade;
+		document.getElementById('grade-select').value = semester;
+		// iframe에 학기 정보 전달
+		try {
+			const iframe = document.getElementById('main-frame');
+			if (iframe && iframe.contentWindow) {
+				iframe.contentWindow.postMessage({type:'semester-changed', value: semester}, '*');
+			}
+		} catch(e) {}
+
+		// 직접 select 변경 시에도 즉시 반영
+		document.getElementById('grade-select').onchange = function() {
+			const semVal = this.value;
+			localStorage.setItem('currentSemester', semVal);
+			updateNavigation();
+			try {
+				const iframe = document.getElementById('main-frame');
+				if (iframe && iframe.contentWindow) {
+					iframe.contentWindow.postMessage({type:'semester-changed', value: semVal}, '*');
+				}
+			} catch(e) {}
+		};
 	}
 
 	// 초기 설정 로드 및 네비게이션 업데이트
