@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
+	// 메뉴 토글 기능
+	const navElement = document.querySelector('.nav');
+	const btnMenu = document.querySelector('.nav .btn-menu');
+	const isCollapsed = localStorage.getItem('navCollapsed') === 'true';
+	
+	if (isCollapsed && navElement) {
+		navElement.classList.add('collapsed');
+	}
+	
+	if (btnMenu) {
+		btnMenu.onclick = function() {
+			if (navElement.classList.contains('collapsed')) {
+				navElement.classList.remove('collapsed');
+				localStorage.setItem('navCollapsed', 'false');
+			} else {
+				navElement.classList.add('collapsed');
+				localStorage.setItem('navCollapsed', 'true');
+			}
+		};
+	}
+
 	const tabMap = {
 		notice: 'front/notice.html',
 		subject: 'front/subject.html',
@@ -6,8 +27,46 @@ document.addEventListener('DOMContentLoaded', function() {
 		register: 'front/register.html'
 	};
 
+	const pathMap = {
+		'/p/c/notice': 'notice',
+		'/p/c/searchMain': 'subject',
+		'/p/b/basketMain': 'basket',
+		'/p/s/sugangMain': 'register'
+	};
+
 	let timerInterval = null;
 	window.globalOpenTime = null;
+
+	// fnLoad 함수: 경로와 페이지 번호로 페이지 로드
+	window.fnLoad = function(path, pageNum) {
+		const pageType = pathMap[path];
+		if (!pageType) return;
+
+		// 학기 기반 예비수강 제한 체크
+		if (pageType === 'basket') {
+			const semester = localStorage.getItem('currentSemester') || '2';
+			if (semester === '1') {
+				document.getElementById('freshman-basket-modal').querySelector('.message').textContent = '1학기에는 예비수강신청 기능을 사용할수없습니다.';
+				document.getElementById('freshman-basket-modal').style.display = 'flex';
+				return;
+			}
+		}
+
+		// 비활성화된 메뉴는 클릭 불가
+		const activeItem = document.querySelector('[data-page="' + pageType + '"]');
+		if (activeItem && activeItem.classList.contains('is-disabled')) {
+			return;
+		}
+
+		// 메뉴 활성화 상태 변경
+		document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('is-active'));
+		if (activeItem) {
+			activeItem.classList.add('is-active');
+		}
+
+		// iframe 로드
+		document.getElementById('main-frame').src = tabMap[pageType];
+	};
 
 	// 학기 선택 변경 시 즉시 반영
 	window.updateGradeSetting = function() {
@@ -15,32 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		localStorage.setItem('currentSemester', semVal);
 		updateNavigation();
 	};
-
-	// 네비게이션 클릭
-	document.querySelectorAll('.nav-menu li').forEach(li => {
-		li.onclick = function() {
-			const pageType = this.dataset.page;
-
-// 학기 기반 예비수강 제한 체크
-		if (pageType === 'basket') {
-			const semester = localStorage.getItem('currentSemester') || '2';
-			if (semester === '1') {
-				document.getElementById('freshman-basket-modal').querySelector('.message').textContent = '1학기에는 예비수강신청 기능을 사용할수없습니다.';
-					document.getElementById('freshman-basket-modal').style.display = 'flex';
-					return;
-				}
-			}
-
-			// 비활성화된 메뉴는 클릭 불가
-			if (this.classList.contains('is-disabled')) {
-				return;
-			}
-
-			document.querySelectorAll('.nav-menu li').forEach(l => l.classList.remove('is-active'));
-			this.classList.add('is-active');
-			document.getElementById('main-frame').src = tabMap[pageType];
-		};
-	});
 
 	// 타이머 설정
 	document.getElementById('set-timer-btn').onclick = function() {
