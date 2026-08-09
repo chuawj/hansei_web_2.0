@@ -93,19 +93,19 @@
       <div class="nav">
         <button class="btn-menu" title="메뉴 접기/펴기">◄</button>
         <ul class="nav-menu">
-          <li class="is-active" onclick="fnLoad('/p/c/notice','1');" style="cursor: pointer; pointer-events: auto;">
+          <li data-page="notice" class="is-active" onclick="fnLoad('/p/c/notice','1');" style="cursor: pointer; pointer-events: auto;">
             <i class="nav-icon-01"></i>
             <span>공지사항</span>
           </li>
-          <li onclick="fnLoad('/p/c/searchMain','2');" style="cursor: pointer; pointer-events: auto;">
+          <li data-page="subject" onclick="fnLoad('/p/c/searchMain','2');" style="cursor: pointer; pointer-events: auto;">
             <i class="nav-icon-08"></i>
             <span>조회</span>
           </li>
-          <li onclick="fnLoad('/p/b/basketMain','3');" style="cursor: pointer; pointer-events: auto;">
+          <li data-page="basket" onclick="fnLoad('/p/b/basketMain','3');" style="cursor: pointer; pointer-events: auto;">
             <i class="nav-icon-06"></i>
             <span>예비수강</span>
           </li>
-          <li onclick="fnLoad('/p/s/sugangMain','4');" style="cursor: pointer; pointer-events: auto;">
+          <li data-page="register" onclick="fnLoad('/p/s/sugangMain','4');" style="cursor: pointer; pointer-events: auto;">
             <i class="nav-icon-04"></i>
             <span>수강신청</span>
           </li>
@@ -115,6 +115,17 @@
       <!-- 오른쪽 콘텐츠 -->
       <div class="contents">
         <iframe id="main-frame" src="front/notice.html"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p><strong>한세대학교</strong></p>
+        <p>Copyright©2025 HANSEI UNIVERSITY ALL RIGHTS RESERVED.</p>
+        <p style="color: #ff6b6b; font-weight: bold;">※ 이 사이트는 연습용 수강신청 시뮬레이션입니다.</p>
       </div>
     </div>
   </div>

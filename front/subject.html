@@ -11,8 +11,8 @@
   <div class="tabs-container">
     <ul class="sw-tabs">
       <li data-tab="tab-1" class="is-active">개설과목</li>
-      <li data-tab="tab-2">예비수강 내역</li>
-      <li data-tab="tab-3">수강신청 내역</li>
+      <li data-tab="tab-2">예비수강 내역조회</li>
+      <li data-tab="tab-3">수강신청 내역조회</li>
     </ul>
   </div>
 
@@ -233,17 +233,14 @@
       </div>
 
       <div class="form-search">
-        <ul class="list-dot">
-          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
-          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
-        </ul>
+        
       </div>
     </div>
 
     <!-- 탭 2: 예비수강 내역 -->
     <div id="tab-2">
       <div class="sw-header">
-        <h1>예비수강 내역</h1>
+        <h1>예비수강 내역조회</h1>
         <div class="actions">
           <div class="info-group">
             <label>총 신청학점 :</label>
@@ -275,19 +272,12 @@
           </tbody>
         </table>
       </div>
-
-      <div class="form-search">
-        <ul class="list-dot">
-          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
-          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
-        </ul>
-      </div>
     </div>
 
     <!-- 탭 3: 수강신청 내역 -->
     <div id="tab-3">
       <div class="sw-header">
-        <h1>수강신청 내역</h1>
+        <h1>수강신청 내역조회</h1>
         <div class="actions">
           <div class="info-group">
             <label>총 신청학점 :</label>
@@ -318,13 +308,6 @@
             <tr><td colspan="10" style="text-align:center; color:#999;">수강신청이 없습니다.</td></tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="form-search">
-        <ul class="list-dot">
-          <li>과목코드 클릭 시 강의계획서가 조회 됩니다</li>
-          <li>인원정보 : <span style="color:#2e7d32;">●</span> 잔여석 여유 | <span style="color:#f57c00;">●</span> 잔여석 보통 | <span style="color:#c62828;">●</span> 잔여석 부족 | <span style="color:#333;">●</span> 마감</li>
-        </ul>
       </div>
     </div>
   </div>
@@ -860,5 +843,16 @@
       initializeApp();
     }
   </script>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p><strong>한세대학교</strong></p>
+        <p>Copyright©2025 HANSEI UNIVERSITY ALL RIGHTS RESERVED.</p>
+        <p style="color: #ff6b6b; font-weight: bold;">※ 이 사이트는 연습용 수강신청 시뮬레이션입니다.</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

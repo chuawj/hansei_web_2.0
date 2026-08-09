@@ -23,6 +23,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      height: 60px;
     }
     .header .is-left {
       display: flex;
@@ -193,7 +194,8 @@
     /* 왼쪽 네비게이션 */
     .nav {
       position: relative;
-      width: 130px;
+      width: 100px;
+      aspect-ratio: 100 / 686.67;
       background: #f5f5f5;
       border-right: 1px solid #ddd;
       display: flex;
@@ -251,8 +253,8 @@
 
     .nav-menu li {
       position: relative;
-      padding: 40px 10px;
-      font-size: 13px;
+      padding: 25px 8px;
+      font-size: 12px;
       font-weight: 600;
       color: #666;
       text-align: center;
@@ -262,7 +264,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 15px;
+      gap: 8px;
     }
 
     .nav-menu li:before {
@@ -282,13 +284,13 @@
 
     .nav-menu li i {
       display: inline-block;
-      width: 50px;
-      height: 50px;
-      border-radius: 6px;
+      width: 45px;
+      height: 45px;
+      border-radius: 0;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      background-color: #f8f8f8;
+      background-color: #1976d2;
       transition: all .3s;
       flex-shrink: 0;
     }
@@ -446,4 +448,52 @@
       width: 100%;
       height: 100%;
       border: none;
+    }
+
+    /* 푸터 */
+    .footer {
+      background: #333;
+      border-top: 1px solid #222;
+      padding: 20px;
+      color: #999;
+      font-size: 11px;
+    }
+    .footer-inner {
+      max-width: 1692px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 30px;
+      min-height: 120px;
+    }
+    .footer-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .footer-left p {
+      margin: 0;
+      line-height: 1.5;
+      color: #aaa;
+    }
+    .footer-left strong {
+      color: #fff;
+    }
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: right;
+      justify-content: center;
+    }
+    .footer-right a {
+      color: #999;
+      text-decoration: none;
+      font-size: 11px;
+      transition: color 0.3s;
+    }
+    .footer-right a:hover {
+      color: #1976d2;
     }
