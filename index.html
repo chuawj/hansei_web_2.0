@@ -51,10 +51,31 @@
           <option value="2" selected>2학기 (예비수강 가능)</option>
         </select>
       </div>
+      <div id="timer-section">
+        <label>
+          <span>오픈 시간:</span>
+          <input type="number" id="timer-hour" min="0" max="23" value="0" placeholder="시">
+          <span>:</span>
+          <input type="number" id="timer-min" min="0" max="59" value="0" placeholder="분">
+          <span>:</span>
+          <input type="number" id="timer-sec" min="0" max="59" value="0" placeholder="초">
+        </label>
+        <button id="set-timer-btn">설정</button>
+        <button id="reset-btn">초기화</button>
+        <span id="timer-status"></span>
+      </div>
       <div id="settings-modal-buttons">
         <button class="cancel-btn" onclick="document.getElementById('settings-modal').style.display='none'">닫기</button>
         <button class="confirm-btn" onclick="saveSettings()">저장</button>
       </div>
+    </div>
+  </div>
+
+  <div id="reconnect-modal" style="display: none;">
+    <div>
+      <div class="title">세션 만료</div>
+      <div class="message">접속 시간이 만료되었습니다.<br>재접속 버튼을 눌러 다시 시작해주세요.</div>
+      <button id="reconnect-btn" type="button">재접속</button>
     </div>
   </div>
 
@@ -64,27 +85,16 @@
       <div class="is-left">
         <span>2026년도 1학기</span>
         <span class="title">
-          시간 : <span id="server-time">2026-02-10 15:33:42</span>
+           <span class="time-label">시간 :</span>
+           <span id="server-time">2026-02-10 15:33:42</span>
+           <button class="link-btn" type="button">link</button>
         </span>
       </div>
       <div class="is-right">
+         <span class="student-info">학생 사용자 <b>|</b> 2학년 <b>|</b> 총신청 : <strong><span id="total-credit">0</span>학점</strong></span>
+         <span class="header-timer"><span id="timer-display">10:00</span> <button id="extend-session-btn" type="button">연장하기</button></span>
         <button class="settings-btn" onclick="document.getElementById('settings-modal').style.display='flex'" title="설정">⚙️</button>
       </div>
-    </div>
-
-    <!-- 타이머 설정 -->
-    <div id="timer-section">
-      <label>
-        <span style="font-weight:600;">오픈 시간:</span>
-        <input type="number" id="timer-hour" min="0" max="23" value="0" placeholder="시">
-        <span>:</span>
-        <input type="number" id="timer-min" min="0" max="59" value="0" placeholder="분">
-        <span>:</span>
-        <input type="number" id="timer-sec" min="0" max="59" value="0" placeholder="초">
-      </label>
-      <button id="set-timer-btn">설정</button>
-      <button id="reset-btn">초기화</button>
-      <span id="timer-status"></span>
     </div>
 
     <!-- 바디 (네비게이션 + 콘텐츠) -->
@@ -123,9 +133,9 @@
   <div class="footer">
     <div class="footer-inner">
       <div class="footer-left">
-        <p><strong>한세대학교</strong></p>
-        <p>Copyright©2025 HANSEI UNIVERSITY ALL RIGHTS RESERVED.</p>
-        <p style="color: #ff6b6b; font-weight: bold;">※ 이 사이트는 연습용 수강신청 시뮬레이션입니다.</p>
+        <p class="university-mark"><strong>수강신청 연습 시스템</strong><span>COURSE REGISTRATION PRACTICE</span></p>
+        <p>학습과 기능 테스트를 위한 시뮬레이션 페이지입니다.</p>
+        <p>실제 수강신청 서비스가 아니며 개인정보를 저장하지 않습니다.</p>
       </div>
     </div>
   </div>

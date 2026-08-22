@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	};
 
 	let timerInterval = null;
+	let sessionTimerInterval = null;
+	let sessionExpiresAt = 0;
 	window.globalOpenTime = null;
 
 	window.fnLoad = function(path, pageNum) {
@@ -237,9 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	function updateTimer() {
 		if (!window.globalOpenTime) return;
-		const timerDisplay = document.getElementById('timer-display');
 		const timerStatus = document.getElementById('timer-status');
-		if (!timerDisplay || !timerStatus) return;
+		if (!timerStatus) return;
 
 		const update = function() {
 			const now = new Date();
@@ -247,18 +248,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			if (diff <= 0) {
 				clearInterval(timerInterval);
-				if (timerDisplay) timerDisplay.textContent = '00:00 (오픈됨)';
-				if (timerStatus) timerStatus.textContent = '';
+				if (timerStatus) timerStatus.textContent = '신청 가능';
 			} else {
 				const h = Math.floor(diff / 3600);
 				const m = Math.floor((diff % 3600) / 60);
 				const s = diff % 60;
-				if (timerDisplay) timerDisplay.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+				if (timerStatus) timerStatus.textContent = `오픈까지 ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 			}
 		};
 
 		update();
 		timerInterval = setInterval(update, 500);
+	}
+
+	function startSessionTimer() {
+		const timerDisplay = document.getElementById('timer-display');
+		const reconnectModal = document.getElementById('reconnect-modal');
+		const reconnectButton = document.getElementById('reconnect-btn');
+		const extendButton = document.getElementById('extend-session-btn');
+		if (!timerDisplay || !reconnectModal) return;
+
+		const resetSession = function() {
+			sessionExpiresAt = Date.now() + 10 * 60 * 1000;
+			reconnectModal.style.display = 'none';
+		};
+		const updateSession = function() {
+			const remaining = Math.max(0, Math.ceil((sessionExpiresAt - Date.now()) / 1000));
+			const minutes = Math.floor(remaining / 60);
+			const seconds = remaining % 60;
+			timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+			if (remaining === 0) {
+				clearInterval(sessionTimerInterval);
+				reconnectModal.style.display = 'flex';
+			}
+		};
+
+		const restartSession = function() {
+			resetSession();
+			clearInterval(sessionTimerInterval);
+			updateSession();
+			sessionTimerInterval = setInterval(updateSession, 1000);
+		};
+		reconnectButton.addEventListener('click', restartSession);
+		extendButton?.addEventListener('click', restartSession);
+		restartSession();
 	}
 
 	function updateTotalCredit() {
@@ -289,6 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	initializeSettings();
+	startSessionTimer();
 	updateServerTime();
 	setInterval(updateServerTime, 1000);
 	setInterval(updateTotalCredit, 500);
